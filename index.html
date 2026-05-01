@@ -1,596 +1,1263 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HuntHQ — Priyal Verma</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HuntHQ — Private Job Application Command Centre</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --bg:#f6f1e8;
+  --bg2:#fbf8f1;
+  --panel:rgba(255,255,255,.88);
+  --panel-solid:#ffffff;
+  --ink:#161626;
+  --ink2:#2e2e45;
+  --muted:#76768d;
+  --muted2:#9c9caf;
+  --soft:#f2eadb;
+  --line:#e5dccb;
+  --line2:#d9ccb5;
+  --gold:#c7a24b;
+  --gold-dark:#9c7622;
+  --gold2:#fbf0cf;
+  --green:#15734f;
+  --green2:#e2f5eb;
+  --blue:#234f8f;
+  --blue2:#e6eefb;
+  --red:#b4232b;
+  --red2:#ffe8e8;
+  --purple:#6952c6;
+  --purple2:#efeafd;
+  --shadow:0 18px 45px rgba(31,27,18,.10);
+  --shadow2:0 8px 22px rgba(31,27,18,.08);
+  --radius:22px;
+  --radius2:16px;
+  --sidebar:#141424;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--ink:#1a1a2e;--ink2:#4a4a6a;--ink3:#9090b0;--cream:#f8f7f4;--white:#fff;--gold:#c9a84c;--gold-light:#f0e6c8;--green:#2d6a4f;--green-light:#d8f3dc;--red:#c1121f;--red-light:#ffe0e0;--blue:#1d3557;--blue-light:#e0eaf5;--border:#e2e0da;--radius:12px;--shadow:0 2px 16px rgba(26,26,46,0.08)}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;font-size:14px}
-.app{display:flex;min-height:100vh}
-.sidebar{width:220px;background:var(--ink);padding:24px 0;flex-shrink:0;display:flex;flex-direction:column;position:fixed;height:100vh;overflow-y:auto;z-index:20}
-.logo-wrap{padding:0 20px 24px;border-bottom:1px solid rgba(255,255,255,0.08)}
-.logo-name{font-family:'Playfair Display',serif;color:var(--gold);font-size:16px;font-weight:600}
-.logo-sub{color:rgba(255,255,255,0.4);font-size:11px;margin-top:2px}
-.nav{padding:16px 0;flex:1}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;color:rgba(255,255,255,0.55);font-size:13px;transition:all .15s;border-left:2px solid transparent}
-.nav-item:hover{color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.04)}
-.nav-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(201,168,76,0.08)}
-.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08)}
-.user-avatar{width:28px;height:28px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--ink);flex-shrink:0}
-.user-name{color:rgba(255,255,255,0.8);font-size:12px;font-weight:500}
-.user-email{color:rgba(255,255,255,0.35);font-size:10px;word-break:break-all}
-.main{flex:1;margin-left:220px;display:flex;flex-direction:column}
-.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.page-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:600}
-.page-sub{font-size:12px;color:var(--ink3);margin-top:2px}
-.content{padding:24px 28px}
-.screen{display:none}.screen.active{display:block}
-.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
-.card-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;margin-bottom:4px}
-.card-sub{font-size:12px;color:var(--ink3);margin-bottom:16px}
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px}
-.stat-label{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-.stat-val{font-family:'Playfair Display',serif;font-size:26px;font-weight:600}
-.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;margin-top:4px;font-weight:500}
-.badge-gold{background:var(--gold-light);color:#7a5c00}
-.badge-green{background:var(--green-light);color:var(--green)}
-.badge-blue{background:var(--blue-light);color:var(--blue)}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-label{font-size:12px;font-weight:500;color:var(--ink2);margin-bottom:5px;display:block}
-.optional{color:var(--ink3);font-weight:300;font-size:11px}
-input,select,textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:var(--white);outline:none;transition:border-color .15s}
-input:focus,select:focus,textarea:focus{border-color:var(--gold)}
-textarea{resize:vertical;min-height:80px;line-height:1.6}
-.fg{margin-bottom:14px}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s}
-.btn-gold{background:var(--gold);color:var(--ink)}.btn-gold:hover{background:#b8932e}
-.btn-outline{background:transparent;color:var(--ink);border:1px solid var(--border)}.btn-outline:hover{background:var(--cream)}
-.btn-green{background:var(--green);color:var(--white)}.btn-green:hover{background:#1f5238}
-.btn-sm{padding:6px 12px;font-size:12px}
-.btn-full{width:100%;justify-content:center}
-.resume-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px}
-.ro{border:1.5px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:all .15s;background:var(--white)}
-.ro:hover,.ro.sel{border-color:var(--gold);background:var(--gold-light)}
-.ro-name{font-size:13px;font-weight:500;margin-bottom:2px}
-.ro-desc{font-size:11px;color:var(--ink3)}
-.ro-chk{float:right;color:var(--gold);display:none}
-.ro.sel .ro-chk{display:inline}
-.out-row{display:flex;gap:8px;margin-bottom:4px}
-.ob{flex:1;padding:8px;border:1.5px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;font-size:12px;font-weight:500;color:var(--ink2);transition:all .15s;background:var(--white)}
-.ob:hover,.ob.sel{border-color:var(--gold);background:var(--gold-light);color:#7a5c00}
-.output-box{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:16px;font-size:13px;line-height:1.8;color:var(--ink);white-space:pre-wrap;min-height:100px}
-.out-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center}
-.dots{display:inline-flex;gap:4px;align-items:center}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:bounce 1.2s infinite}
-.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
-@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
-.tbl{width:100%;border-collapse:collapse}
-.tbl th{font-size:11px;font-weight:500;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);background:var(--cream)}
-.tbl td{padding:12px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
-.tbl tr:last-child td{border-bottom:none}
-.tbl tr:hover td{background:var(--cream)}
-.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
-.s-draft{background:#f0f0f0;color:#666}
-.s-sent{background:var(--green-light);color:var(--green)}
-.s-replied{background:var(--blue-light);color:var(--blue)}
-.s-interview{background:var(--gold-light);color:#7a5c00}
-.pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.pipe-col{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.pipe-hdr{padding:12px 14px;font-size:12px;font-weight:500;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.pipe-hdr.applied{background:#f8f7f4;color:var(--ink2)}
-.pipe-hdr.replied{background:var(--blue-light);color:var(--blue)}
-.pipe-hdr.interview{background:var(--gold-light);color:#7a5c00}
-.pipe-hdr.offer{background:var(--green-light);color:var(--green)}
-.pipe-cnt{font-family:'Playfair Display',serif;font-size:18px;font-weight:600}
-.pipe-cards{padding:10px;min-height:60px;display:flex;flex-direction:column;gap:6px}
-.pc{background:var(--cream);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12px}
-.pc-co{font-weight:500}.pc-ro{color:var(--ink3);font-size:11px;margin-top:1px}
-.wa-bubble{background:#e8fde8;border-radius:12px 12px 4px 12px;padding:14px 16px;font-size:13px;line-height:1.7;color:#1a2e1a;white-space:pre-wrap;border:1px solid #c8edc8}
-.tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.tc{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .15s}
-.tc:hover{border-color:var(--gold);box-shadow:var(--shadow)}
-.tc-icon{font-size:22px;margin-bottom:8px}
-.tc-name{font-size:13px;font-weight:500;margin-bottom:3px}
-.tc-desc{font-size:11px;color:var(--ink3);line-height:1.5}
-.sopt{border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:13px;transition:all .15s}
-.sopt:hover,.sopt.picked{border-color:var(--gold);background:var(--gold-light)}
-.notice{border-radius:8px;padding:10px 14px;font-size:12px;line-height:1.6;margin-bottom:16px}
-.notice-blue{background:var(--blue-light);border:1px solid #b8d0e8;color:var(--blue)}
-.notice-gold{background:var(--gold-light);border:1px solid #dfc87a;color:#7a5c00}
-.notice-green{background:var(--green-light);border:1px solid #a0d4b0;color:var(--green)}
-.notice-red{background:var(--red-light);border:1px solid #f5c0c0;color:var(--red)}
-hr.div{border:none;border-top:1px solid var(--border);margin:18px 0}
-.empty{text-align:center;padding:40px 20px;color:var(--ink3)}
-.empty-icon{font-size:32px;margin-bottom:10px}
-.flex{display:flex}.aic{align-items:center}.jb{justify-content:space-between}.g8{gap:8px}.g12{gap:12px}
-.mb4{margin-bottom:4px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}.mb20{margin-bottom:20px}.mt8{margin-top:8px}.mt12{margin-top:12px}
-.ts{font-size:12px}.tx{font-size:11px}.muted{color:var(--ink3)}.w5{font-weight:500}
-/* Setup overlay */
-.overlay{position:fixed;inset:0;background:rgba(26,26,46,0.75);z-index:100;display:flex;align-items:center;justify-content:center}
-.setup-box{background:var(--white);border-radius:var(--radius);padding:32px;max-width:460px;width:90%}
-.setup-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;margin-bottom:8px}
-.setup-sub{font-size:13px;color:var(--ink3);line-height:1.7;margin-bottom:20px}
-@media(max-width:900px){.stats-row{grid-template-columns:1fr 1fr}.two-col,.three-col{grid-template-columns:1fr}.pipe{grid-template-columns:1fr 1fr}.tool-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.sidebar{width:56px}.logo-wrap span:last-child,.nav-item span:last-child,.sidebar-footer .user-name,.sidebar-footer .user-email{display:none}.main{margin-left:56px}.content{padding:16px}.topbar{padding:12px 16px}.stats-row{grid-template-columns:1fr 1fr}.pipe{grid-template-columns:1fr 1fr}.tool-grid{grid-template-columns:1fr}}
+html{scroll-behavior:smooth}
+body{
+  font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
+  background:
+    radial-gradient(circle at 7% 5%, rgba(199,162,75,.23), transparent 28%),
+    radial-gradient(circle at 92% 12%, rgba(35,79,143,.13), transparent 30%),
+    linear-gradient(135deg,var(--bg),var(--bg2));
+  color:var(--ink);
+  font-size:14px;
+  line-height:1.5;
+  min-height:100vh;
+}
+button,input,textarea,select{font-family:inherit}
+a{color:var(--blue);text-decoration:none}
+.hide{display:none!important}
+
+.lock{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:
+    radial-gradient(circle at top left, rgba(199,162,75,.32), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(36,79,143,.18), transparent 26%),
+    linear-gradient(135deg,#f9f4e8,#fffaf1);
+}
+.lock-card{
+  width:min(560px,100%);
+  background:rgba(255,255,255,.82);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(229,220,203,.9);
+  border-radius:32px;
+  box-shadow:0 30px 80px rgba(22,22,38,.16);
+  padding:36px;
+}
+.brand{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.logo{
+  width:50px;height:50px;border-radius:18px;
+  background:linear-gradient(145deg,#17172b,#2a2a45);
+  color:var(--gold);
+  display:grid;place-items:center;
+  font-family:"Playfair Display",serif;font-size:27px;
+  box-shadow:0 10px 25px rgba(22,22,38,.22);
+}
+.brand h1{font-family:"Playfair Display",serif;font-size:34px;line-height:1}
+.brand p{color:var(--muted);font-size:12px;margin-top:3px}
+.lock-card h2{font-family:"Playfair Display",serif;font-size:26px;margin-bottom:8px}
+.lock-card .sub{color:var(--muted);margin-bottom:20px}
+.notice{
+  border-radius:16px;
+  padding:13px 15px;
+  font-size:13px;
+  margin:12px 0;
+  border:1px solid var(--line);
+}
+.notice.gold{background:var(--gold2);color:#745813;border-color:#e7d28f}
+.notice.blue{background:var(--blue2);color:var(--blue);border-color:#c7d8ef}
+.notice.green{background:var(--green2);color:var(--green);border-color:#b9dfcf}
+.notice.red{background:var(--red2);color:var(--red);border-color:#f0b7bc}
+label{
+  font-size:12px;
+  font-weight:800;
+  color:#4d4d65;
+  margin-bottom:7px;
+  display:block;
+}
+input,select,textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px 13px;
+  background:rgba(255,255,255,.92);
+  color:var(--ink);
+  outline:none;
+  transition:border-color .15s, box-shadow .15s, background .15s;
+}
+textarea{min-height:104px;resize:vertical}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 4px rgba(199,162,75,.14);
+  background:#fff;
+}
+.fg{margin-bottom:15px}
+.btn{
+  border:0;
+  border-radius:14px;
+  padding:11px 15px;
+  font-weight:800;
+  cursor:pointer;
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  justify-content:center;
+  transition:.15s transform,.15s opacity,.15s background,.15s box-shadow;
+  white-space:nowrap;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow2)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.gold{background:linear-gradient(135deg,#d2b25e,#bd9438);color:#17172b}
+.btn.dark{background:linear-gradient(135deg,#17172b,#2b2b49);color:#fff}
+.btn.out{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn.green{background:linear-gradient(135deg,#1d8a61,#146b4b);color:#fff}
+.btn.red{background:linear-gradient(135deg,#c63a43,#a51f28);color:#fff}
+.btn.full{width:100%}
+.btn.sm{padding:7px 11px;border-radius:11px;font-size:12px}
+
+.app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+.sidebar{
+  position:sticky;top:0;height:100vh;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(199,162,75,.16), transparent 34%),
+    linear-gradient(180deg,#17172b,#10101d);
+  color:#fff;
+  padding:24px 0;
+  display:flex;
+  flex-direction:column;
+  border-right:1px solid rgba(255,255,255,.08);
+}
+.side-brand{padding:0 24px 22px;border-bottom:1px solid rgba(255,255,255,.08)}
+.side-brand .name{
+  font-family:"Playfair Display",serif;
+  color:var(--gold);
+  font-size:28px;
+  font-weight:700;
+  letter-spacing:.2px;
+}
+.side-brand .small{font-size:11px;color:rgba(255,255,255,.48);margin-top:2px}
+.nav{padding:16px 0;overflow:auto;flex:1}
+.nav button{
+  width:100%;
+  background:transparent;
+  color:rgba(255,255,255,.64);
+  border:0;
+  text-align:left;
+  padding:12px 24px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  cursor:pointer;
+  border-left:3px solid transparent;
+  font-weight:700;
+  letter-spacing:.01em;
+}
+.nav button:hover{background:rgba(255,255,255,.055);color:#fff}
+.nav button.active{
+  color:#f2d17b;
+  background:linear-gradient(90deg,rgba(199,162,75,.16),transparent);
+  border-left-color:var(--gold);
+}
+.side-foot{
+  margin:0 18px;
+  padding:16px 14px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  font-size:12px;
+  color:rgba(255,255,255,.62);
+  background:rgba(255,255,255,.035);
+}
+#sideName{font-weight:800;color:#fff;margin-bottom:2px}
+.main{min-width:0}
+.topbar{
+  position:sticky;top:0;z-index:5;
+  background:rgba(255,255,255,.72);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(229,220,203,.88);
+  padding:20px 30px;
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:center;
+}
+.title h2{
+  font-family:"Playfair Display",serif;
+  font-size:30px;
+  line-height:1.15;
+}
+.title p{font-size:12px;color:var(--muted);margin-top:4px}
+.content{padding:26px 30px 44px}
+.screen{display:none}
+.screen.active{display:block;animation:fadeIn .18s ease-out}
+@keyframes fadeIn{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:none}}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.card{
+  background:var(--panel);
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(229,220,203,.92);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:21px;
+  margin-bottom:18px;
+}
+.card h3{
+  font-family:"Playfair Display",serif;
+  font-size:21px;
+  margin-bottom:4px;
+}
+.card .hint{color:var(--muted);font-size:12px;margin-bottom:15px}
+.stat{
+  background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(255,251,242,.9));
+  border:1px solid rgba(229,220,203,.95);
+  border-radius:22px;
+  padding:20px;
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+.stat:after{
+  content:"";
+  position:absolute;
+  width:90px;height:90px;
+  border-radius:50%;
+  background:rgba(199,162,75,.13);
+  right:-35px;top:-35px;
+}
+.stat .k{
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:.075em;
+  text-transform:uppercase;
+  font-weight:900;
+}
+.stat .v{
+  font-family:"Playfair Display",serif;
+  font-size:38px;
+  font-weight:700;
+  margin-top:4px;
+  position:relative;
+  z-index:1;
+}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900;
+  padding:5px 10px;
+  border:1px solid transparent;
+}
+.pill.gold{background:var(--gold2);color:#765914;border-color:#ebd893}
+.pill.green{background:var(--green2);color:var(--green);border-color:#bee0cf}
+.pill.blue{background:var(--blue2);color:var(--blue);border-color:#c7d8ef}
+.pill.red{background:var(--red2);color:var(--red);border-color:#efb9be}
+.pill.purple{background:var(--purple2);color:var(--purple);border-color:#d6ccfb}
+.list{display:grid;gap:11px}
+.item{
+  border:1px solid var(--line);
+  border-radius:17px;
+  padding:13px;
+  background:rgba(255,255,255,.82);
+  transition:border-color .15s, transform .15s, box-shadow .15s;
+}
+.item:hover{border-color:var(--line2);transform:translateY(-1px);box-shadow:var(--shadow2)}
+.item .meta{font-size:12px;color:var(--muted);margin-top:3px}
+.table-wrap{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+}
+table{width:100%;border-collapse:collapse;background:#fff}
+th{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+  color:var(--muted);
+  text-align:left;
+  background:#fbf7ef;
+  padding:12px;
+  border-bottom:1px solid var(--line);
+  white-space:nowrap;
+}
+td{
+  padding:12px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+  white-space:nowrap;
+}
+tr:last-child td{border-bottom:0}
+tr:hover td{background:#fffdf8}
+.outbox{
+  white-space:pre-wrap;
+  background:#fbf7ef;
+  border:1px solid var(--line);
+  border-radius:17px;
+  padding:15px;
+  min-height:150px;
+  line-height:1.75;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55);
+}
+.outbox[contenteditable="true"]{background:#fff}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}
+.tab{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:999px;
+  padding:8px 13px;
+  cursor:pointer;
+  font-weight:900;
+  font-size:12px;
+  transition:.15s;
+}
+.tab:hover{border-color:var(--gold)}
+.tab.active{background:linear-gradient(135deg,#17172b,#292946);color:#fff;border-color:#17172b}
+.kanban{display:grid;grid-template-columns:repeat(6,1fr);gap:13px}
+.col{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.62);
+  border-radius:18px;
+  overflow:hidden;
+  min-height:230px;
+}
+.col h4{
+  padding:13px;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  font-size:12px;
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+}
+.col .cards{padding:11px;display:grid;gap:9px;min-height:140px}
+.kcard{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:11px;
+  font-size:12px;
+  box-shadow:0 4px 12px rgba(31,27,18,.05);
+}
+.score{
+  height:11px;
+  background:#eee5d6;
+  border-radius:999px;
+  overflow:hidden;
+}
+.score span{display:block;height:100%;background:linear-gradient(90deg,#c7a24b,#e2c675);width:0%}
+.hr{height:1px;background:var(--line);margin:15px 0}
+.small{font-size:12px;color:var(--muted)}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+.search{display:grid;grid-template-columns:1fr auto;gap:9px}
+.right-actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+.keyword{
+  font-size:11px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:5px 9px;
+  background:#fff;
+  margin:2px;
+  display:inline-flex;
+  font-weight:800;
+  color:var(--ink2);
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d7c8af;border-radius:999px}
+::-webkit-scrollbar-track{background:#f7f0e4}
+
+@media(max-width:1180px){
+  .app{grid-template-columns:250px 1fr}
+  .g4{grid-template-columns:repeat(2,1fr)}
+  .g3,.g2{grid-template-columns:1fr}
+  .kanban{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:780px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:relative;height:auto;padding:18px 0}
+  .side-brand{padding:0 18px 16px}
+  .nav{display:grid;grid-template-columns:repeat(2,1fr);padding:10px}
+  .nav button{padding:10px 12px;border-radius:12px;border-left:0}
+  .nav button.active{border-left:0;background:rgba(199,162,75,.16)}
+  .side-foot{margin:8px 16px 0}
+  .topbar{position:relative;padding:16px;align-items:flex-start;flex-direction:column}
+  .content{padding:16px}
+  .g4{grid-template-columns:1fr}
+  .kanban{grid-template-columns:1fr}
+  .search{grid-template-columns:1fr}
+  .right-actions{justify-content:flex-start}
+  .lock-card{padding:25px;border-radius:26px}
+  .brand h1{font-size:30px}
+}
 </style>
 </head>
 <body>
 
-<div class="overlay" id="setupOverlay">
-  <div class="setup-box">
-    <div class="setup-title">Welcome to HuntHQ ✦</div>
-    <div class="setup-sub">
-      This app uses the Claude AI API to generate personalised cover letters, emails, and smart tools — all based on your real profile, Priyal.<br><br>
-      Get your free API key at <a href="https://console.anthropic.com" target="_blank" style="color:var(--gold)">console.anthropic.com</a> → API Keys → Create Key.<br><br>
-      Your key is saved only in <strong>your browser</strong> and never shared.
+<section class="lock" id="lockScreen">
+  <div class="lock-card">
+    <div class="brand">
+      <div class="logo">H</div>
+      <div>
+        <h1>HuntHQ</h1>
+        <p>Private job application command centre</p>
+      </div>
+    </div>
+    <h2 id="lockTitle">Create your private access code</h2>
+    <p class="sub" id="lockSub">This protects the app in your browser. For real web-level privacy, keep the GitHub repository private or deploy behind authentication.</p>
+    <div class="notice gold">
+      Static GitHub Pages cannot truly restrict public access by itself. This passcode hides your data locally, but anyone with the public link can still view the code. Use a private repo or authenticated hosting for strict privacy.
     </div>
     <div class="fg">
-      <label>Anthropic API Key</label>
-      <input id="apiKeyInput" type="password" placeholder="sk-ant-...">
-      <div class="tx muted" style="margin-top:4px">Stored locally in your browser only.</div>
+      <label>Access code</label>
+      <input type="password" id="accessCode" placeholder="Enter a private code" />
     </div>
-    <button class="btn btn-gold btn-full" onclick="saveApiKey()">Save & Launch HuntHQ →</button>
+    <button class="btn dark full" onclick="unlock()">Enter HuntHQ</button>
+    <div class="row" style="margin-top:12px">
+      <button class="btn out sm" onclick="resetAllData()">Reset local data</button>
+      <span class="small">Data is stored only in this browser.</span>
+    </div>
   </div>
-</div>
+</section>
 
-<div class="app">
-  <div class="sidebar">
-    <div class="logo-wrap">
-      <div class="logo-name">HuntHQ</div>
-      <div class="logo-sub">Priyal's Job Command Centre</div>
+<section class="app hide" id="app">
+  <aside class="sidebar">
+    <div class="side-brand">
+      <div class="name">HuntHQ</div>
+      <div class="small">Priyal’s private job OS</div>
     </div>
-    <nav class="nav">
-      <div class="nav-item active" onclick="go('dashboard')"><span>◈</span><span> Dashboard</span></div>
-      <div class="nav-item" onclick="go('compose')"><span>✦</span><span> New Outreach</span></div>
-      <div class="nav-item" onclick="go('tracker')"><span>◎</span><span> Tracker</span></div>
-      <div class="nav-item" onclick="go('pipeline')"><span>⬡</span><span> Pipeline</span></div>
-      <div class="nav-item" onclick="go('whatsapp')"><span>◉</span><span> WhatsApp Gen</span></div>
-      <div class="nav-item" onclick="go('tools')"><span>✧</span><span> Smart Tools</span></div>
+    <nav class="nav" id="nav">
+      <button class="active" data-screen="dashboard">◈ Dashboard</button>
+      <button data-screen="apply">✦ Apply in 60 Seconds</button>
+      <button data-screen="opps">◆ Opportunities</button>
+      <button data-screen="contacts">◎ Contacts</button>
+      <button data-screen="resumes">▣ Resume Library</button>
+      <button data-screen="tracker">☷ Tracker</button>
+      <button data-screen="pipeline">⬡ Pipeline</button>
+      <button data-screen="followups">⏱ Follow-ups</button>
+      <button data-screen="tools">✧ Smart Tools</button>
+      <button data-screen="settings">⚙ Settings</button>
     </nav>
-    <div class="sidebar-footer">
-      <div class="flex aic g8">
-        <div class="user-avatar">PV</div>
-        <div>
-          <div class="user-name">Priyal Verma</div>
-          <div class="user-email">priyal.verma.work@gmail.com</div>
-        </div>
-      </div>
+    <div class="side-foot">
+      <div id="sideName">Priyal Verma</div>
+      <div id="sideEmail">priyal.verma.work@gmail.com</div>
     </div>
-  </div>
+  </aside>
 
-  <div class="main">
+  <main class="main">
     <div class="topbar">
-      <div>
-        <div class="page-title" id="pgTitle">Dashboard</div>
-        <div class="page-sub" id="pgSub">Your job search at a glance</div>
+      <div class="title">
+        <h2 id="pageTitle">Dashboard</h2>
+        <p id="pageSub">Everything you need to apply faster, honestly, and safely.</p>
       </div>
-      <button class="btn btn-outline btn-sm" onclick="go('compose')">+ New Outreach</button>
+      <div class="right-actions">
+        <button class="btn gold" onclick="go('apply')">✦ Apply in 60 Seconds</button>
+        <button class="btn out" onclick="exportBackup()">Export Backup</button>
+      </div>
     </div>
-    <div class="content">
 
-      <!-- DASHBOARD -->
+    <div class="content">
       <div class="screen active" id="s-dashboard">
-        <div class="stats-row">
-          <div class="stat-card"><div class="stat-label">Total Contacted</div><div class="stat-val" id="st-total">0</div><span class="badge badge-gold">All time</span></div>
-          <div class="stat-card"><div class="stat-label">Drafts</div><div class="stat-val" id="st-draft">0</div><span class="badge badge-blue">In progress</span></div>
-          <div class="stat-card"><div class="stat-label">Replied</div><div class="stat-val" id="st-replied">0</div><span class="badge badge-green">Responses</span></div>
-          <div class="stat-card"><div class="stat-label">Interviews</div><div class="stat-val" id="st-int">0</div><span class="badge badge-gold">Scheduled</span></div>
+        <div class="card" style="background:linear-gradient(135deg,rgba(23,23,43,.96),rgba(44,44,75,.94));color:#fff;border-color:rgba(255,255,255,.08);overflow:hidden;position:relative">
+          <div style="position:absolute;right:-70px;top:-80px;width:220px;height:220px;border-radius:50%;background:rgba(199,162,75,.18)"></div>
+          <div style="position:relative;z-index:1">
+            <div class="pill gold" style="margin-bottom:12px">Private Student Job OS</div>
+            <h3 style="font-size:30px;color:#fff">Apply faster without losing honesty.</h3>
+            <div class="hint" style="color:rgba(255,255,255,.68);max-width:760px">HuntHQ uses your verified marketing, communication, analytics, brand, and consulting evidence to create aligned applications. No fabricated achievements, no random AI claims, and every draft stays editable.</div>
+            <div class="row" style="margin-top:14px">
+              <button class="btn gold" onclick="go('apply')">✦ Start 60-second application</button>
+              <button class="btn out" onclick="go('resumes')">▣ Update resume evidence</button>
+            </div>
+          </div>
         </div>
-        <div class="two-col">
+        <div class="grid g4">
+          <div class="stat"><div class="k">Opportunities</div><div class="v" id="statOpps">0</div></div>
+          <div class="stat"><div class="k">Contacts</div><div class="v" id="statContacts">0</div></div>
+          <div class="stat"><div class="k">Applications</div><div class="v" id="statApps">0</div></div>
+          <div class="stat"><div class="k">Due Follow-ups</div><div class="v" id="statDue">0</div></div>
+        </div>
+
+        <div class="grid g2" style="margin-top:16px">
           <div class="card">
-            <div class="card-title">Recent Outreach</div>
-            <div class="card-sub">Your latest contacts</div>
-            <div id="recent-list"><div class="empty"><div class="empty-icon">✦</div><div>No outreach yet. Start below.</div></div></div>
+            <h3>Action needed today</h3>
+            <div class="hint">Follow-ups, pending drafts, and high-priority opportunities.</div>
+            <div id="todayActions" class="list"></div>
           </div>
           <div class="card">
-            <div class="card-title">Quick Actions</div>
-            <div class="card-sub">Jump to what matters</div>
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <button class="btn btn-gold btn-full" onclick="go('compose')">✦ New Outreach Email</button>
-              <button class="btn btn-outline btn-full" onclick="go('whatsapp')">◉ WhatsApp Message</button>
-              <button class="btn btn-outline btn-full" onclick="go('tools')">✧ Smart Tools</button>
-              <button class="btn btn-outline btn-full" onclick="go('tracker')">◎ View Tracker</button>
+            <h3>Quick start</h3>
+            <div class="hint">The cleanest flow for your placement and off-campus applications.</div>
+            <div class="list">
+              <button class="btn gold full" onclick="go('apply')">✦ Start new application</button>
+              <button class="btn out full" onclick="go('contacts')">◎ Add or upload HR contacts</button>
+              <button class="btn out full" onclick="go('resumes')">▣ Upload or update resume</button>
+              <button class="btn out full" onclick="go('followups')">⏱ Check follow-ups</button>
             </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Recent applications</h3>
+          <div class="hint">Latest saved outreach packs.</div>
+          <div id="recentApps"></div>
+        </div>
+      </div>
+
+      <div class="screen" id="s-apply">
+        <div class="notice blue"><b>Flow:</b> Add/select opportunity → add/select HR → paste JD → HuntHQ recommends the best resume → creates honest email, cover letter, WhatsApp, LinkedIn, and follow-up drafts using only your stored resume evidence.</div>
+        <div class="grid g4" style="margin-bottom:18px">
+          <div class="item"><b>1. Opportunity</b><div class="meta">Company, role, JD, link, priority</div></div>
+          <div class="item"><b>2. Contact</b><div class="meta">Existing HR or add a new recruiter</div></div>
+          <div class="item"><b>3. Evidence match</b><div class="meta">Best resume + keyword fit score</div></div>
+          <div class="item"><b>4. Draft pack</b><div class="meta">Email, cover letter, WhatsApp, LinkedIn</div></div>
+        </div>
+        <div class="grid g2">
+          <div>
+            <div class="card">
+              <h3>1. Opportunity</h3>
+              <div class="hint">Use existing role or add a new one immediately.</div>
+              <div class="fg"><label>Select saved opportunity</label><select id="apOpp"></select></div>
+              <div class="fg"><label>Company</label><input id="apCompany" placeholder="e.g. Accenture" /></div>
+              <div class="fg"><label>Role</label><input id="apRole" placeholder="e.g. Change Management Analyst" /></div>
+              <div class="fg"><label>Location</label><input id="apLocation" placeholder="e.g. Bengaluru / Hyderabad / Remote" /></div>
+              <div class="fg"><label>Job link</label><input id="apLink" placeholder="Paste job link" /></div>
+              <div class="fg"><label>Job Description</label><textarea id="apJD" placeholder="Paste JD here. This drives resume matching and honest cover letter alignment."></textarea></div>
+              <div class="row">
+                <select id="apPriority" style="width:auto"><option>High</option><option selected>Medium</option><option>Low</option></select>
+                <button class="btn out sm" onclick="saveOpportunityFromApply()">Save opportunity</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>2. HR / Contact</h3>
+              <div class="hint">Select an existing HR or type a new one. New contacts are saved automatically.</div>
+              <div class="fg"><label>Select saved contact</label><select id="apContact"></select></div>
+              <div class="grid g2">
+                <div class="fg"><label>HR Name</label><input id="apHRName" placeholder="e.g. Tanishka Gupta" /></div>
+                <div class="fg"><label>HR Email</label><input id="apHREmail" placeholder="e.g. hr@company.com" /></div>
+              </div>
+              <div class="grid g2">
+                <div class="fg"><label>Phone / WhatsApp</label><input id="apPhone" placeholder="+91..." /></div>
+                <div class="fg"><label>Source</label><select id="apSource"><option>LinkedIn</option><option>Naukri</option><option>Campus</option><option>Referral</option><option>Email</option><option>WhatsApp</option><option>Company Site</option><option>Other</option></select></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>3. Resume & tone</h3>
+              <div class="hint">Choose manually or let HuntHQ recommend based on JD keywords.</div>
+              <div class="fg"><label>Resume</label><select id="apResume"></select></div>
+              <div class="row">
+                <button class="btn out sm" onclick="recommendResume()">Recommend best resume</button>
+                <button class="btn gold sm" onclick="generateApplicationPack()">Generate application pack</button>
+              </div>
+              <div id="matchPanel" style="margin-top:12px"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="position:sticky;top:90px">
+              <div class="between">
+                <div>
+                  <h3>Generated application pack</h3>
+                  <div class="hint">Editable before copying or saving. No facts are invented.</div>
+                </div>
+                <button class="btn green sm" onclick="saveApplicationPack()">Save to tracker</button>
+              </div>
+              <div class="tabs">
+                <button class="tab active" data-outtab="email">Email</button>
+                <button class="tab" data-outtab="cover">Cover letter</button>
+                <button class="tab" data-outtab="whatsapp">WhatsApp</button>
+                <button class="tab" data-outtab="linkedin">LinkedIn</button>
+                <button class="tab" data-outtab="resume">Resume Rebuilder</button>
+              </div>
+              <div id="outEmail" class="outbox" contenteditable="true">Your email draft will appear here.</div>
+              <div id="outCover" class="outbox hide" contenteditable="true">Your cover letter will appear here.</div>
+              <div id="outWhatsapp" class="outbox hide" contenteditable="true">Your WhatsApp message will appear here.</div>
+              <div id="outLinkedin" class="outbox hide" contenteditable="true">Your LinkedIn message will appear here.</div>
+              <div id="outResume" class="outbox hide">ATS-style resume rebuild suggestions will appear here.</div>
+              <div class="row" style="margin-top:12px">
+                <button class="btn out sm" onclick="copyActiveOutput()">Copy current</button>
+                <button class="btn out sm" onclick="openGmailCompose()">Open Gmail compose</button>
+                <button class="btn out sm" onclick="downloadCoverLetter()">Download cover letter .txt</button>
+              </div>
+              <div class="notice gold"><b>Important:</b> GitHub Pages cannot create Gmail drafts by itself. This version opens Gmail compose with prefilled text. True Gmail draft creation needs a small backend with Google OAuth.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen" id="s-opps">
+        <div class="card">
+          <div class="between">
+            <div><h3>Opportunities</h3><div class="hint">Save roles before applying, or add them during the 60-second flow.</div></div>
+            <button class="btn gold" onclick="showOppForm()">+ Add opportunity</button>
+          </div>
+          <div id="oppForm" class="hide">
+            <div class="hr"></div>
+            <div class="grid g2">
+              <div class="fg"><label>Company</label><input id="oCompany"></div>
+              <div class="fg"><label>Role</label><input id="oRole"></div>
+            </div>
+            <div class="grid g3">
+              <div class="fg"><label>Location</label><input id="oLocation"></div>
+              <div class="fg"><label>Priority</label><select id="oPriority"><option>High</option><option selected>Medium</option><option>Low</option></select></div>
+              <div class="fg"><label>Deadline</label><input type="date" id="oDeadline"></div>
+            </div>
+            <div class="fg"><label>Job link</label><input id="oLink"></div>
+            <div class="fg"><label>JD</label><textarea id="oJD"></textarea></div>
+            <button class="btn green" onclick="saveOpportunity()">Save opportunity</button>
           </div>
         </div>
         <div class="card">
-          <div class="card-title">Your Profile Snapshot</div>
-          <div class="card-sub">4 resumes loaded and ready</div>
-          <div class="three-col mb12">
-            <div style="background:var(--cream);border-radius:8px;padding:12px"><div class="tx muted mb4">Resume 1</div><div class="w5 ts">Digital Marketing & Analytics</div></div>
-            <div style="background:var(--cream);border-radius:8px;padding:12px"><div class="tx muted mb4">Resume 2</div><div class="w5 ts">Strategic Communicator</div></div>
-            <div style="background:var(--cream);border-radius:8px;padding:12px"><div class="tx muted mb4">Resume 3</div><div class="w5 ts">Brand Strategist & Growth</div></div>
+          <div class="search"><input id="oppSearch" oninput="renderOpps()" placeholder="Search opportunities..."><button class="btn out" onclick="renderOpps()">Search</button></div>
+        </div>
+        <div id="oppList" class="list"></div>
+      </div>
+
+      <div class="screen" id="s-contacts">
+        <div class="grid g2">
+          <div class="card">
+            <h3>Add HR contact</h3>
+            <div class="hint">You can add one manually or upload/paste many at once.</div>
+            <div class="grid g2">
+              <div class="fg"><label>Name</label><input id="cName"></div>
+              <div class="fg"><label>Email</label><input id="cEmail"></div>
+            </div>
+            <div class="grid g2">
+              <div class="fg"><label>Company</label><input id="cCompany"></div>
+              <div class="fg"><label>Role / Function</label><input id="cRole"></div>
+            </div>
+            <div class="grid g2">
+              <div class="fg"><label>Phone / WhatsApp</label><input id="cPhone"></div>
+              <div class="fg"><label>Source</label><select id="cSource"><option>LinkedIn</option><option>Naukri</option><option>Campus</option><option>Referral</option><option>Email</option><option>WhatsApp</option><option>Other</option></select></div>
+            </div>
+            <div class="fg"><label>Notes</label><textarea id="cNotes"></textarea></div>
+            <button class="btn green" onclick="saveContact()">Save contact</button>
           </div>
-          <div style="background:var(--cream);border-radius:8px;padding:12px;display:flex;gap:20px;flex-wrap:wrap">
-            <div><span class="tx muted">Resume 4 — </span><span class="w5 ts">Consulting & Strategy</span></div>
-            <div><span class="tx muted">Portfolio — </span><a href="https://priyalverma96-design.github.io/portfolio-website/" target="_blank" style="font-size:12px;color:var(--gold)">View ↗</a></div>
-            <div><span class="tx muted">LinkedIn — </span><a href="https://www.linkedin.com/in/priyal-verma13/" target="_blank" style="font-size:12px;color:var(--gold)">View ↗</a></div>
+          <div class="card">
+            <h3>Bulk upload contacts</h3>
+            <div class="hint">CSV format: name,email,company,role,phone,source,notes</div>
+            <div class="fg"><label>Upload CSV</label><input type="file" id="csvFile" accept=".csv,.txt" onchange="importContactsFile(event)"></div>
+            <div class="fg"><label>Or paste contacts CSV</label><textarea id="csvPaste" placeholder="name,email,company,role,phone,source,notes"></textarea></div>
+            <button class="btn gold" onclick="importContactsPaste()">Import contacts</button>
+            <div class="notice blue">Duplicate emails are merged instead of duplicated.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="search"><input id="contactSearch" oninput="renderContacts()" placeholder="Search contacts by name, email, company..."><button class="btn out" onclick="renderContacts()">Search</button></div>
+        </div>
+        <div id="contactList"></div>
+      </div>
+
+      <div class="screen" id="s-resumes">
+        <div class="grid g2">
+          <div class="card">
+            <h3>Resume Library</h3>
+            <div class="hint">Upload, rename, edit, replace, delete, and tag resumes. HuntHQ uses the evidence text for honest alignment.</div>
+            <div id="resumeList" class="list"></div>
+          </div>
+          <div class="card">
+            <h3>Add / update resume</h3>
+            <div class="hint">Best: paste resume text. For PDF/DOCX, paste extracted text because browser-only parsing is limited.</div>
+            <input type="hidden" id="rEditId">
+            <div class="fg"><label>Resume name</label><input id="rName" placeholder="e.g. Consulting & Strategy Resume"></div>
+            <div class="fg"><label>Tags</label><input id="rTags" placeholder="consulting, strategy, analytics"></div>
+            <div class="fg"><label>Upload text file optional</label><input type="file" id="rFile" accept=".txt,.md,.csv" onchange="loadResumeFile(event)"></div>
+            <div class="fg"><label>Verified resume evidence / bullet text</label><textarea id="rText" style="min-height:230px" placeholder="Paste real resume bullets, achievements, tools, projects, metrics. HuntHQ will only use this."></textarea></div>
+            <div class="row">
+              <button class="btn green" onclick="saveResume()">Save resume</button>
+              <button class="btn out" onclick="clearResumeForm()">Clear</button>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- COMPOSE -->
-      <div class="screen" id="s-compose">
-        <div class="notice notice-blue"><strong>How this works:</strong> Fill in HR details → pick resume → choose output → AI generates tailored content using your real experience → you review & edit → copy to Gmail and send.</div>
-        <div class="two-col">
-          <div>
-            <div class="card">
-              <div class="card-title">HR Contact Details</div>
-              <div class="card-sub">More info = more tailored output</div>
-              <div class="fg"><label>HR Name <span class="optional">(optional)</span></label><input id="hrName" placeholder="e.g. Tanishka Gupta"></div>
-              <div class="fg"><label>Company *</label><input id="hrCo" placeholder="e.g. Chaayos"></div>
-              <div class="fg"><label>HR Email *</label><input id="hrEmail" type="email" placeholder="e.g. tanishka@chaayos.com"></div>
-              <div class="fg"><label>Role Hiring For <span class="optional">(optional)</span></label><input id="hrRole" placeholder="e.g. Brand Manager, Growth Lead"></div>
-              <div class="fg"><label>Company Type <span class="optional">(optional)</span></label>
-                <select id="hrType"><option value="">Auto-detect</option><option value="MNC">Large MNC / Corporate</option><option value="startup">Startup / Scale-up</option><option value="FMCG">FMCG / Consumer Goods</option><option value="fintech">Fintech / Banking</option><option value="consulting">Consulting / Professional Services</option><option value="media">Media / Entertainment</option><option value="tech">Tech / SaaS</option></select>
-              </div>
-              <div class="fg"><label>Job Description <span class="optional">(optional — paste for maximum precision)</span></label><textarea id="hrJD" placeholder="Paste the full JD here for the most tailored output..." style="min-height:100px"></textarea></div>
-            </div>
-            <div class="card">
-              <div class="card-title">Select Resume</div>
-              <div class="card-sub">Which fits this opportunity best?</div>
-              <div class="resume-grid">
-                <div class="ro" onclick="selRes(this,'r1')"><span class="ro-chk">✓</span><div class="ro-name">Resume 1</div><div class="ro-desc">Digital Marketing & Analytics</div></div>
-                <div class="ro" onclick="selRes(this,'r2')"><span class="ro-chk">✓</span><div class="ro-name">Resume 2</div><div class="ro-desc">Strategic Communicator</div></div>
-                <div class="ro" onclick="selRes(this,'r3')"><span class="ro-chk">✓</span><div class="ro-name">Resume 3</div><div class="ro-desc">Brand Strategist & Growth</div></div>
-                <div class="ro" onclick="selRes(this,'r4')"><span class="ro-chk">✓</span><div class="ro-name">Resume 4</div><div class="ro-desc">Consulting & Strategy</div></div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-title">Output Type</div>
-              <div class="card-sub">What should AI generate?</div>
-              <div class="out-row">
-                <div class="ob" onclick="selOut(this,'email')">Email Only</div>
-                <div class="ob" onclick="selOut(this,'cover')">Cover Letter Only</div>
-                <div class="ob sel" onclick="selOut(this,'both')">Both</div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div class="card" style="position:sticky;top:80px">
-              <div class="card-title">AI Generated Output</div>
-              <div class="card-sub">Review and edit before saving</div>
-              <div id="gen-area"><div class="empty" style="padding:30px 20px"><div class="empty-icon">✦</div><div>Fill the form and click Generate.</div></div></div>
-              <hr class="div">
-              <button class="btn btn-gold btn-full" id="genBtn" onclick="generate()">✦ Generate with AI</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TRACKER -->
       <div class="screen" id="s-tracker">
         <div class="card">
-          <div class="flex jb aic mb16">
-            <div><div class="card-title">Outreach Tracker</div><div class="card-sub">Every contact, every status</div></div>
-            <select style="width:150px;padding:6px 10px;font-size:12px" onchange="filterTrk(this.value)">
-              <option value="all">All Statuses</option>
-              <option value="Draft Created">Draft Created</option>
-              <option value="Replied">Replied</option>
-              <option value="Interview">Interview</option>
-              <option value="Offer">Offer</option>
-            </select>
+          <div class="between">
+            <div><h3>Tracker</h3><div class="hint">Every application pack you generate and save.</div></div>
+            <button class="btn out" onclick="exportCSV('applications')">Export applications CSV</button>
           </div>
-          <div style="overflow-x:auto">
-            <table class="tbl">
-              <thead><tr><th>Name</th><th>Company</th><th>Role</th><th>Resume</th><th>Date</th><th>Status</th><th>Update</th></tr></thead>
-              <tbody id="trk-body"><tr><td colspan="7"><div class="empty"><div class="empty-icon">◎</div><div>No contacts yet.</div></div></td></tr></tbody>
-            </table>
-          </div>
+          <div class="fg"><input id="trackerSearch" oninput="renderTracker()" placeholder="Search tracker..."></div>
+          <div id="trackerTable"></div>
         </div>
       </div>
 
-      <!-- PIPELINE -->
       <div class="screen" id="s-pipeline">
-        <div class="pipe">
-          <div class="pipe-col"><div class="pipe-hdr applied"><span>Drafted</span><span class="pipe-cnt" id="p-a">0</span></div><div class="pipe-cards" id="pc-a"></div></div>
-          <div class="pipe-col"><div class="pipe-hdr replied"><span>Replied</span><span class="pipe-cnt" id="p-r">0</span></div><div class="pipe-cards" id="pc-r"></div></div>
-          <div class="pipe-col"><div class="pipe-hdr interview"><span>Interview</span><span class="pipe-cnt" id="p-i">0</span></div><div class="pipe-cards" id="pc-i"></div></div>
-          <div class="pipe-col"><div class="pipe-hdr offer"><span>Offer</span><span class="pipe-cnt" id="p-o">0</span></div><div class="pipe-cards" id="pc-o"></div></div>
-        </div>
         <div class="card">
-          <div class="card-title">Update Status</div>
-          <div class="card-sub">Move a contact to a new stage</div>
-          <div class="flex g8 aic" style="flex-wrap:wrap">
-            <div style="flex:1;min-width:160px"><label>Contact</label><select id="pipeContact"><option value="">Choose...</option></select></div>
-            <div style="flex:1;min-width:120px"><label>New Status</label><select id="pipeSt"><option value="Draft Created">Draft Created</option><option value="Replied">Replied</option><option value="Interview">Interview</option><option value="Offer">Offer</option></select></div>
-            <button class="btn btn-gold" style="margin-top:18px" onclick="updatePipe()">Update</button>
-          </div>
+          <h3>Pipeline</h3>
+          <div class="hint">Move each opportunity through your job-search funnel.</div>
+          <div id="kanban" class="kanban"></div>
         </div>
       </div>
 
-      <!-- WHATSAPP -->
-      <div class="screen" id="s-whatsapp">
-        <div class="two-col">
-          <div class="card">
-            <div class="card-title">WhatsApp Message Generator</div>
-            <div class="card-sub">Copy and send via WhatsApp</div>
-            <div class="fg"><label>HR Name <span class="optional">(optional)</span></label><input id="waN" placeholder="e.g. Tanishka"></div>
-            <div class="fg"><label>Company *</label><input id="waCo" placeholder="e.g. Chaayos"></div>
-            <div class="fg"><label>Role <span class="optional">(optional)</span></label><input id="waRo" placeholder="e.g. Brand Manager"></div>
-            <div class="fg"><label>Select Resume</label>
-              <select id="waRes">
-                <option value="r1">Resume 1 — Digital Marketing & Analytics</option>
-                <option value="r2">Resume 2 — Strategic Communicator</option>
-                <option value="r3">Resume 3 — Brand Strategist & Growth</option>
-                <option value="r4">Resume 4 — Consulting & Strategy</option>
-              </select>
-            </div>
-            <button class="btn btn-gold btn-full mt12" onclick="genWA()">◉ Generate Message</button>
-          </div>
-          <div class="card">
-            <div class="card-title">Generated Message</div>
-            <div class="card-sub">Copy and paste into WhatsApp</div>
-            <div id="wa-out"><div class="empty"><div class="empty-icon">◉</div><div>Fill the form and generate.</div></div></div>
-          </div>
+      <div class="screen" id="s-followups">
+        <div class="card">
+          <h3>Follow-ups</h3>
+          <div class="hint">Never forget a recruiter follow-up, interview thank-you, or pending draft.</div>
+          <div id="followupList" class="list"></div>
         </div>
       </div>
 
-      <!-- SMART TOOLS -->
       <div class="screen" id="s-tools">
-        <div class="tool-grid mb20">
-          <div class="tc" onclick="openTool('jd')"><div class="tc-icon">🔍</div><div class="tc-name">JD Decoder</div><div class="tc-desc">Paste a JD. AI tells you exactly what to highlight from your resume.</div></div>
-          <div class="tc" onclick="openTool('subject')"><div class="tc-icon">✉️</div><div class="tc-name">Subject Line Generator</div><div class="tc-desc">Get 5 powerful subject line options for your outreach email.</div></div>
-          <div class="tc" onclick="openTool('followup')"><div class="tc-icon">🔁</div><div class="tc-name">Follow-Up Drafter</div><div class="tc-desc">Professional follow-up for contacts who haven't replied.</div></div>
-          <div class="tc" onclick="openTool('interview')"><div class="tc-icon">🎯</div><div class="tc-name">Interview Prep</div><div class="tc-desc">Likely questions + STAR answers from your real experience.</div></div>
-          <div class="tc" onclick="openTool('company')"><div class="tc-icon">🏢</div><div class="tc-name">Company Brief</div><div class="tc-desc">5-point research brief on any company before you reach out.</div></div>
-          <div class="tc" onclick="openTool('fit')"><div class="tc-icon">📊</div><div class="tc-name">Role Fit Score</div><div class="tc-desc">Honest AI scoring of how well your profile matches a role.</div></div>
-        </div>
-        <div id="tool-panel" style="display:none">
+        <div class="notice gold"><b>Score clarity:</b> HuntHQ shows a Profile-to-JD Fit Score, not an official ATS score. Real ATS systems differ by company. This score helps you choose the strongest resume and rebuild wording honestly from your verified experience.</div>
+        <div class="grid g2">
           <div class="card">
-            <div class="flex jb aic mb12"><div class="card-title" id="tp-title"></div><button class="btn btn-outline btn-sm" onclick="document.getElementById('tool-panel').style.display='none'">✕ Close</button></div>
-            <div id="tp-content"></div>
+            <h3>JD Decoder + Resume Match</h3>
+            <div class="hint">Paste a JD and select a resume to get honest match score, missing keywords, and suggested rewrites.</div>
+            <div class="fg"><label>JD</label><textarea id="toolJD"></textarea></div>
+            <div class="fg"><label>Resume</label><select id="toolResume"></select></div>
+            <button class="btn gold" onclick="runJDTool()">Analyse JD</button>
+          </div>
+          <div class="card">
+            <h3>Result</h3>
+            <div id="toolResult" class="outbox">Analysis will appear here.</div>
           </div>
         </div>
       </div>
 
+      <div class="screen" id="s-settings">
+        <div class="grid g2">
+          <div class="card">
+            <h3>Your identity</h3>
+            <div class="fg"><label>Name</label><input id="setName"></div>
+            <div class="fg"><label>Email</label><input id="setEmail"></div>
+            <div class="fg"><label>Phone</label><input id="setPhone"></div>
+            <div class="fg"><label>LinkedIn</label><input id="setLinkedin"></div>
+            <div class="fg"><label>Portfolio</label><input id="setPortfolio"></div>
+            <div class="fg"><label>Default tone</label><select id="setTone"><option>Formal and corporate</option><option>Warm professional</option><option>Concise and direct</option></select></div>
+            <button class="btn green" onclick="saveSettings()">Save settings</button>
+          </div>
+          <div class="card">
+            <h3>Backup & privacy</h3>
+            <div class="hint">Use this when shifting laptop/browser.</div>
+            <button class="btn out full" onclick="exportBackup()">Export full backup JSON</button>
+            <div class="fg" style="margin-top:12px"><label>Import backup JSON</label><input type="file" accept=".json" onchange="importBackup(event)"></div>
+            <button class="btn red full" onclick="resetAllData()">Reset all local data</button>
+            <div class="notice red"><b>Privacy note:</b> This is a static no-API app. Your data stays in this browser. Real “only me” access needs private GitHub Pages, Firebase Auth, Cloudflare Access, Netlify password protection, or Vercel auth.</div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+  </main>
+</section>
 
 <script>
-const P={
-  name:"Priyal Verma",email:"priyal.verma.work@gmail.com",
-  portfolio:"https://priyalverma96-design.github.io/portfolio-website/",
-  linkedin:"https://www.linkedin.com/in/priyal-verma13/",
-  resumes:{
-    r1:{l:"Resume 1 — Digital Marketing & Analytics",s:"Marketing Strategist & Brand Storyteller. MBA candidate at SP Jain (Global Marketing). CNN-News18 Assistant Producer: 200+ bulletins, 25M+ viewers, 30% engagement uplift, 300+ data-driven visual assets, A/B tested content formats. WION Trainee Journalist: 180+ prime-time stories, 8M+ daily impressions, 40% retention increase, 45% engagement uplift for climate content. Skills: Digital Marketing, Performance Marketing, Google Analytics, CRM (HubSpot, Salesforce, Zoho), Power BI, AI-Powered Ads, Funnel Optimization, Gen AI (Claude, Cohere, Gemini, Synthesia). Projects: Salesforce dashboard ($440K revenue, 810% ROI), Zoho CRM funnel analysis, Amazon AI CX analysis (3 regions, 100+ responses), FluencePay mobile payment strategy (60%+ drop-off insight). Certs: Google Analytics, AI-Powered Performance Ads, Advanced Excel. Awards: 1st Entrepreneurship Pitch SP Jain, 3rd Blue Ocean Strategy."},
-    r2:{l:"Resume 2 — Strategic Communicator (SPJG)",s:"Strategic communicator with journalism, engineering, and marketing background. MBA at SP Jain School of Global Management (Global Marketing). CNN-News18: 200+ bulletins, 25M+ viewers, 150+ multimedia elements, 30% engagement improvement, 500+ live production elements managed. WION: 180+ prime-time stories, 8M+ daily impressions, 40% retention increase, 25+ climate stories with 45% engagement uplift, multi-platform distribution. Projects: Amazon AI CX cross-cultural analysis (PESTLE, SWOT, 3 regions, 70%+ users prioritising price over personalisation insight), FluencePay transaction-driven engagement strategy. B.Tech ECE background. Cross-functional collaborator."},
-    r3:{l:"Resume 3 — Brand Strategist & Growth",s:"Brand Strategist & Growth Marketing Specialist. Full-funnel content strategist (TOFU-MOFU-BOFU). CNN-News18: Architected TOFU content strategy, 200+ bulletins, 25M+ viewers, 30% retention lift, AIDA principles applied, 300+ data-driven visual assets. WION: 180+ prime-time stories, 8M+ daily impressions, 40% retention, 45% engagement uplift for climate vertical, multi-platform content. Skills: Full-Funnel Content Planning, Brand Positioning, Audience Segmentation, Campaign Architecture, Narrative-Led Growth, AI-Enabled Marketing (Claude, Cohere, Gemini, Synthesia), CRM Analytics (Salesforce $440K revenue dashboard, 810% ROI). Awards: 1st Entrepreneurship Business Pitch SP Jain."},
-    r4:{l:"Resume 4 — Consulting & Strategy",s:"Strategy Consultant — Market Intelligence & Business Problem-Solving. CNN-News18: synthesised complex data into 200+ structured outputs for 25M+ viewers, 300+ data visualisations, A/B tested content formats, diagnosed audience drop-off and improved engagement 30%, managed 500+ live production elements. WION: structured 180+ international affairs stories with MECE logic, 8M+ impressions, identified white space in climate reporting driving 45% uplift. Projects: Amazon AI CX cross-cultural analysis (PESTLE, SWOT, 3 regions, 70%+ users prioritising price over personalisation), FluencePay mobile payment strategy (mapped 5+ friction points, 60%+ drop-off at onboarding). Blue Ocean Strategy Competition 3rd place (presented to 6 industry professionals). MBA Global Marketing SP Jain."}
+const STORE_KEY='hunthq_v2_data';
+const PASS_KEY='hunthq_v2_pass_hash';
+let activeScreen='dashboard';
+let activeOutput='email';
+let currentPack=null;
+
+const DEFAULT_DATA={
+  settings:{
+    name:'Priyal Verma',
+    email:'priyal.verma.work@gmail.com',
+    phone:'',
+    linkedin:'https://www.linkedin.com/in/priyal-verma13/',
+    portfolio:'https://priyalverma96-design.github.io/portfolio-website/',
+    tone:'Formal and corporate',
+    followupDays:5
+  },
+  resumes:[
+    {id:id(),name:'Resume 1 — Digital Marketing & Analytics',tags:'digital marketing, analytics, CRM, performance, dashboard, advertising',isDefault:false,text:'Marketing Strategist & Brand Storyteller. MBA candidate at SP Jain School of Global Management, Global Marketing. CNN-News18 Assistant Producer: 200+ bulletins, 25M+ viewers, 30% engagement uplift, 300+ data-driven visual assets, A/B tested content formats. WION Trainee Journalist: 180+ prime-time stories, 8M+ daily impressions, 40% retention increase, 45% engagement uplift for climate content. Skills: Digital Marketing, Performance Marketing, Google Analytics, CRM, HubSpot, Salesforce, Zoho, Power BI, AI-Powered Ads, Funnel Optimization, Gen AI tools. Projects: Salesforce dashboard, $440K revenue, 810% ROI; Zoho CRM funnel analysis; Amazon AI CX analysis across 3 regions with 100+ responses; FluencePay mobile payment strategy with 60%+ drop-off insight. Certifications: Google Analytics, AI-Powered Performance Ads, Advanced Excel. Awards: 1st Entrepreneurship Pitch SP Jain, 3rd Blue Ocean Strategy.'},
+    {id:id(),name:'Resume 2 — Strategic Communicator',tags:'communication, corporate, MNC, content, stakeholder, media',isDefault:false,text:'Strategic communicator with journalism, engineering, and marketing background. MBA at SP Jain School of Global Management, Global Marketing. CNN-News18: 200+ bulletins, 25M+ viewers, 150+ multimedia elements, 30% engagement improvement, 500+ live production elements managed. WION: 180+ prime-time stories, 8M+ daily impressions, 40% retention increase, 25+ climate stories with 45% engagement uplift, multi-platform distribution. Projects: Amazon AI CX cross-cultural analysis using PESTLE and SWOT across 3 regions, with 70%+ users prioritising price over personalisation. FluencePay transaction-driven engagement strategy. B.Tech Electronics and Communication Engineering background. Cross-functional collaborator.'},
+    {id:id(),name:'Resume 3 — Brand Strategist & Growth',tags:'brand, growth, storytelling, funnel, content strategy, positioning',isDefault:true,text:'Brand Strategist & Growth Marketing Specialist. Full-funnel content strategist across TOFU, MOFU, and BOFU. CNN-News18: architected TOFU content strategy, 200+ bulletins, 25M+ viewers, 30% retention lift, AIDA principles applied, 300+ data-driven visual assets. WION: 180+ prime-time stories, 8M+ daily impressions, 40% retention, 45% engagement uplift for climate vertical, multi-platform content. Skills: Full-Funnel Content Planning, Brand Positioning, Audience Segmentation, Campaign Architecture, Narrative-Led Growth, AI-Enabled Marketing, CRM Analytics. Salesforce project: $440K revenue dashboard, 810% ROI. Award: 1st Entrepreneurship Business Pitch SP Jain.'},
+    {id:id(),name:'Resume 4 — Consulting & Strategy',tags:'consulting, strategy, market intelligence, problem solving, MECE, analysis',isDefault:false,text:'Strategy Consultant profile focused on market intelligence and business problem-solving. CNN-News18: synthesised complex data into 200+ structured outputs for 25M+ viewers, 300+ data visualisations, A/B tested content formats, diagnosed audience drop-off and improved engagement 30%, managed 500+ live production elements. WION: structured 180+ international affairs stories with MECE logic, 8M+ impressions, identified white space in climate reporting driving 45% uplift. Projects: Amazon AI CX cross-cultural analysis using PESTLE and SWOT across 3 regions; 70%+ users prioritising price over personalisation. FluencePay mobile payment strategy: mapped 5+ friction points, 60%+ drop-off at onboarding. Blue Ocean Strategy Competition: 3rd place, presented to 6 industry professionals. MBA Global Marketing at SP Jain.'}
+  ],
+  contacts:[],
+  opportunities:[],
+  applications:[]
+};
+
+let data=loadData();
+
+function id(){return 'id_'+Math.random().toString(36).slice(2,10)+'_'+Date.now().toString(36)}
+async function sha256(s){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+function todayISO(){return new Date().toISOString().slice(0,10)}
+function addDays(n){const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+function escapeHTML(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function loadData(){try{return {...structuredClone(DEFAULT_DATA),...JSON.parse(localStorage.getItem(STORE_KEY)||'{}')}}catch(e){return structuredClone(DEFAULT_DATA)}}
+function saveData(){localStorage.setItem(STORE_KEY,JSON.stringify(data));refreshAll()}
+function download(name, text, type='text/plain'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+
+async function unlock(){
+  const code=document.getElementById('accessCode').value.trim();
+  if(!code){alert('Enter your access code.');return}
+  const hash=await sha256(code);
+  const saved=localStorage.getItem(PASS_KEY);
+  if(!saved){localStorage.setItem(PASS_KEY,hash);showApp();return}
+  if(saved===hash){showApp();return}
+  alert('Wrong access code.');
+}
+function showApp(){document.getElementById('lockScreen').classList.add('hide');document.getElementById('app').classList.remove('hide');init()}
+function resetAllData(){
+  if(confirm('This will delete HuntHQ data from this browser. Continue?')){
+    localStorage.removeItem(STORE_KEY);localStorage.removeItem(PASS_KEY);location.reload();
   }
-};
-
-let contacts=JSON.parse(localStorage.getItem('hq_contacts')||'[]');
-let selResume=null,selOutput='both';
-let API_KEY=localStorage.getItem('hq_key')||'';
-
-window.onload=()=>{
-  if(API_KEY) document.getElementById('setupOverlay').style.display='none';
-  refresh();
-};
-
-function saveApiKey(){
-  const k=document.getElementById('apiKeyInput').value.trim();
-  if(!k||!k.startsWith('sk-')){alert('Please enter a valid Anthropic API key (starts with sk-)');return;}
-  API_KEY=k;localStorage.setItem('hq_key',k);
-  document.getElementById('setupOverlay').style.display='none';
+}
+if(localStorage.getItem(PASS_KEY)){
+  document.getElementById('lockTitle').textContent='Enter your private access code';
+  document.getElementById('lockSub').textContent='Unlock your locally stored HuntHQ workspace.';
 }
 
-function save(){localStorage.setItem('hq_contacts',JSON.stringify(contacts));}
-function refresh(){refreshStats();refreshTrk();refreshPipe();}
-
-const titles={dashboard:['Dashboard','Your job search at a glance'],compose:['New Outreach','Generate a personalised email & cover letter'],tracker:['Outreach Tracker','Every contact, every status'],pipeline:['Pipeline','Your job search funnel'],whatsapp:['WhatsApp Generator','Ready-to-copy messages'],tools:['Smart Tools','AI-powered job search tools']};
-
-function go(id){
+function init(){
+  document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.screen)));
+  document.querySelectorAll('[data-outtab]').forEach(b=>b.addEventListener('click',()=>setOutTab(b.dataset.outtab)));
+  fillSettings();refreshAll();
+}
+function go(screen){
+  activeScreen=screen;
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('s-'+id).classList.add('active');
-  const idx=['dashboard','compose','tracker','pipeline','whatsapp','tools'].indexOf(id);
-  if(idx>=0)document.querySelectorAll('.nav-item')[idx].classList.add('active');
-  document.getElementById('pgTitle').textContent=titles[id][0];
-  document.getElementById('pgSub').textContent=titles[id][1];
-  if(id==='pipeline')refreshPipe();
-  if(id==='tracker')refreshTrk();
-  if(id==='dashboard')refreshStats();
+  document.getElementById('s-'+screen).classList.add('active');
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.screen===screen));
+  const map={
+    dashboard:['Dashboard','Everything you need to apply faster, honestly, and safely.'],
+    apply:['Apply in 60 Seconds','Generate a complete, evidence-backed application pack.'],
+    opps:['Opportunities','Save, search, and prioritise job roles.'],
+    contacts:['Contacts','Upload, add, edit, and manage HR contacts.'],
+    resumes:['Resume Library','Upload, edit, tag, and select resumes.'],
+    tracker:['Tracker','All saved applications and their next actions.'],
+    pipeline:['Pipeline','Your job-search stages in one view.'],
+    followups:['Follow-ups','Due, overdue, and upcoming outreach actions.'],
+    tools:['Smart Tools','JD matching, resume suggestions, and honest rewrite guidance.'],
+    settings:['Settings','Identity, backup, and privacy controls.']
+  };
+  document.getElementById('pageTitle').textContent=map[screen][0];
+  document.getElementById('pageSub').textContent=map[screen][1];
+  refreshAll();
+}
+function refreshAll(){
+  renderStats();renderApplySelects();renderOpps();renderContacts();renderResumes();renderTracker();renderPipeline();renderFollowups();fillSettings();renderToolsSelects();
+  document.getElementById('sideName').textContent=data.settings.name;
+  document.getElementById('sideEmail').textContent=data.settings.email;
 }
 
-function selRes(el,id){document.querySelectorAll('.ro').forEach(r=>r.classList.remove('sel'));el.classList.add('sel');selResume=id;}
-function selOut(el,t){document.querySelectorAll('.ob').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');selOutput=t;}
-
-async function callClaude(prompt,max=1000){
-  const r=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:max,messages:[{role:'user',content:prompt}]})
-  });
-  const d=await r.json();
-  if(d.error)throw new Error(d.error.message);
-  return d.content?.find(b=>b.type==='text')?.text||'';
+function renderStats(){
+  const due=data.applications.filter(a=>a.nextFollowup && a.status!=='Rejected' && a.status!=='Offer' && a.nextFollowup<=todayISO()).length;
+  setText('statOpps',data.opportunities.length);setText('statContacts',data.contacts.length);setText('statApps',data.applications.length);setText('statDue',due);
+  const actions=[];
+  data.applications.filter(a=>a.nextFollowup && a.nextFollowup<=todayISO()).slice(0,6).forEach(a=>actions.push(`<div class="item"><b>${escapeHTML(a.company)}</b> — ${escapeHTML(a.role)}<div class="meta">Follow-up due: ${a.nextFollowup} · ${a.status}</div><button class="btn out sm" onclick="loadAppToApply('${a.id}')">Open</button></div>`));
+  data.opportunities.filter(o=>o.priority==='High').slice(0,3).forEach(o=>actions.push(`<div class="item"><b>${escapeHTML(o.company)}</b> — ${escapeHTML(o.role)}<div class="meta">High priority opportunity</div><button class="btn out sm" onclick="useOpportunity('${o.id}')">Apply</button></div>`));
+  document.getElementById('todayActions').innerHTML=actions.join('')||'<div class="empty">No urgent actions today.</div>';
+  const recent=data.applications.slice(0,6);
+  document.getElementById('recentApps').innerHTML=recent.length?table(['Company','Role','HR','Status','Next follow-up'],recent.map(a=>[a.company,a.role,a.hrName||'—',statusPill(a.status),a.nextFollowup||'—'])):'<div class="empty">No applications saved yet.</div>';
 }
+function setText(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
 
-async function generate(){
-  const co=document.getElementById('hrCo').value.trim();
-  const em=document.getElementById('hrEmail').value.trim();
-  if(!co||!em){alert('Company name and HR email are required.');return;}
-  if(!selResume){alert('Please select a resume.');return;}
-  const nm=document.getElementById('hrName').value.trim();
-  const ro=document.getElementById('hrRole').value.trim();
-  const tp=document.getElementById('hrType').value;
-  const jd=document.getElementById('hrJD').value.trim();
-  const rd=P.resumes[selResume];
-  const area=document.getElementById('gen-area');
-  area.innerHTML=`<div style="text-align:center;padding:30px 0"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="muted tx" style="margin-top:12px">Generating your tailored outreach...</div></div>`;
-  document.getElementById('genBtn').disabled=true;
-
-  const prompt=`You are a senior career consultant helping Priyal Verma craft highly professional, formal, corporate-tone outreach to an HR professional.
-
-PRIYAL'S PROFILE (${rd.l}):
-${rd.s}
-Portfolio: ${P.portfolio}
-LinkedIn: ${P.linkedin}
-
-TARGET:
-- HR Name: ${nm||'Not provided'}
-- Company: ${co}${tp?' ('+tp+')':''}
-- Role: ${ro||'Marketing role (general)'}
-${jd?'- Job Description:\n'+jd.substring(0,800):''}
-
-TASK: Generate ${selOutput==='email'?'a professional email body only':selOutput==='cover'?'a formal cover letter only':'BOTH a short professional email body AND a full cover letter clearly separated'}.
-
-STRICT RULES:
-1. Only use facts from Priyal's actual profile — never fabricate or exaggerate
-2. Formal and corporate tone throughout — no casual language
-3. Frame her experience compellingly without being false — play with words elegantly and respectfully
-4. Reference specific real metrics where relevant (25M+ viewers, 30% engagement, 810% ROI, 8M+ impressions, 40% retention, 45% uplift etc.)
-5. Tailor specifically to the company type and role provided — make it feel written for them
-6. Email body: max 5 punchy sentences, professional opening, clear call-to-action
-7. Cover letter: 3 paragraphs, formal structure, 250-300 words, compelling narrative
-8. Always include portfolio link: ${P.portfolio}
-9. Sign off as Priyal Verma, ${P.email}
-${selOutput==='both'?'10. Clearly separate with: ---EMAIL BODY--- and ---COVER LETTER---':''}
-
-Start directly with the content. No preamble or explanation.`;
-
-  try{
-    const text=await callClaude(prompt);
-    let eb='',cl='';
-    if(selOutput==='both'){
-      const ei=text.indexOf('---EMAIL BODY---'),ci=text.indexOf('---COVER LETTER---');
-      if(ei!==-1&&ci!==-1){eb=text.substring(ei+16,ci).trim();cl=text.substring(ci+18).trim();}
-      else eb=text;
-    }else if(selOutput==='email'){eb=text;}
-    else{cl=text;}
-
-    window._pc={nm,co,em,ro,resume:rd.l,eb:eb.trim(),cl:cl.trim(),ot:selOutput};
-    const subs=[`Application for ${ro||'Marketing'} Role — Priyal Verma | SP Jain Global MBA`,`Exploring ${ro||'Marketing'} Opportunities at ${co} | Priyal Verma`,`${ro||'Marketing'} | MBA Candidate with 25M+ Media Reach — Priyal Verma`];
-    window._sub=subs[0];
-
-    let h=`<div class="mb12"><label style="margin-bottom:8px">Choose a subject line:</label>${subs.map((s,i)=>`<div class="sopt${i===0?' picked':''}" onclick="pickS(this,'${s.replace(/'/g,"\\'")}')">${s}</div>`).join('')}</div>`;
-    if(selOutput!=='cover') h+=`<label class="mb4">📧 Email Body</label><div class="output-box" contenteditable="true" id="out-em">${eb}</div>`;
-    if(selOutput==='both') h+=`<div style="height:12px"></div>`;
-    if(selOutput!=='email') h+=`<label class="mb4" style="margin-top:${selOutput==='both'?'12px':'0'}">📄 Cover Letter</label><div class="output-box" contenteditable="true" id="out-cl">${cl}</div>`;
-    h+=`<div class="out-actions">
-      <button class="btn btn-green" onclick="approve()">✓ Save & Copy to Clipboard</button>
-      <button class="btn btn-outline btn-sm" onclick="generate()">↺ Regenerate</button>
-    </div>
-    <div class="notice notice-gold" style="margin-top:10px;font-size:11px">✏️ Edit the text above if needed. Click Save to log this contact and copy the email to your clipboard — then paste into Gmail and send.</div>`;
-    area.innerHTML=h;
-  }catch(e){
-    area.innerHTML=`<div class="notice notice-red">Error: ${e.message}<br>Please check your API key and try again.</div>`;
-  }
-  document.getElementById('genBtn').disabled=false;
+function renderApplySelects(){
+  const opp=document.getElementById('apOpp'), con=document.getElementById('apContact'), res=document.getElementById('apResume');
+  if(!opp)return;
+  opp.innerHTML='<option value="">Start new / no saved opportunity</option>'+data.opportunities.map(o=>`<option value="${o.id}">${escapeHTML(o.company)} — ${escapeHTML(o.role)}</option>`).join('');
+  con.innerHTML='<option value="">Start new / no saved contact</option>'+data.contacts.map(c=>`<option value="${c.id}">${escapeHTML(c.name||'No name')} — ${escapeHTML(c.company||'')} ${c.email?'('+escapeHTML(c.email)+')':''}</option>`).join('');
+  res.innerHTML=data.resumes.map(r=>`<option value="${r.id}" ${r.isDefault?'selected':''}>${escapeHTML(r.name)}</option>`).join('');
+  opp.onchange=()=>{const o=data.opportunities.find(x=>x.id===opp.value);if(o){setVal('apCompany',o.company);setVal('apRole',o.role);setVal('apLocation',o.location);setVal('apLink',o.link);setVal('apJD',o.jd);setVal('apPriority',o.priority||'Medium')}};
+  con.onchange=()=>{const c=data.contacts.find(x=>x.id===con.value);if(c){setVal('apHRName',c.name);setVal('apHREmail',c.email);setVal('apPhone',c.phone);setVal('apSource',c.source||'LinkedIn')}};
 }
+function setVal(id,v=''){const el=document.getElementById(id);if(el)el.value=v||''}
+function getVal(id){return document.getElementById(id)?.value.trim()||''}
 
-function pickS(el,s){document.querySelectorAll('.sopt').forEach(x=>x.classList.remove('picked'));el.classList.add('picked');window._sub=s;}
-
-async function approve(){
-  const pc=window._pc;if(!pc)return;
-  const ee=document.getElementById('out-em');
-  const ce=document.getElementById('out-cl');
-  const fe=ee?ee.innerText:pc.eb;
-  const fc=ce?ce.innerText:pc.cl;
-  const sub=window._sub||`Application — Priyal Verma | ${pc.co}`;
-  const clip=`To: ${pc.em}\nSubject: ${sub}\n\n${fe||fc}${pc.ot==='both'&&fc?'\n\n--- COVER LETTER ---\n\n'+fc:''}`;
-  try{await navigator.clipboard.writeText(clip);}catch(e){}
-  const c={id:Date.now(),name:pc.nm||'—',company:pc.co,email:pc.em,role:pc.ro||'—',resume:pc.resume,date:new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}),status:'Draft Created',subject:sub};
-  contacts.unshift(c);save();refresh();
-  document.getElementById('gen-area').innerHTML=`<div class="notice notice-green" style="text-align:center;padding:20px">
-    <div style="font-size:22px;margin-bottom:8px">✓</div>
-    <strong>Saved to tracker & copied to clipboard!</strong><br>
-    <span class="tx">Open Gmail → Compose → paste (Ctrl+V / Cmd+V) → attach your resume → Send.</span><br>
-    <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="resetC()">+ New Outreach</button>
-  </div>`;
-}
-
-function resetC(){
-  document.getElementById('gen-area').innerHTML=`<div class="empty" style="padding:30px 20px"><div class="empty-icon">✦</div><div>Ready for your next outreach.</div></div>`;
-  ['hrName','hrCo','hrEmail','hrRole','hrJD'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('hrType').value='';
-  document.querySelectorAll('.ro').forEach(r=>r.classList.remove('sel'));
-  selResume=null;
-}
-
-async function genWA(){
-  const co=document.getElementById('waCo').value.trim();
-  if(!co){alert('Please enter a company name.');return;}
-  const nm=document.getElementById('waN').value.trim();
-  const ro=document.getElementById('waRo').value.trim();
-  const rd=P.resumes[document.getElementById('waRes').value];
-  document.getElementById('wa-out').innerHTML=`<div style="text-align:center;padding:20px"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
-  const prompt=`Write a professional WhatsApp message from Priyal Verma to ${nm?nm+' at':'an HR at'} ${co}${ro?' regarding a '+ro+' opportunity':''}.
-Profile (${rd.l}): ${rd.s}
-Portfolio: ${P.portfolio}
-Rules: WhatsApp-appropriate, concise, 4-6 lines max, warm but formal, mention 1-2 real achievements with numbers, include portfolio link, clear ask to connect, no bullet points, flowing text, sign off as Priyal Verma. Output only the message text.`;
-  try{
-    const t=await callClaude(prompt,300);
-    document.getElementById('wa-out').innerHTML=`<div class="wa-bubble">${t}</div><div class="out-actions mt8"><button class="btn btn-outline btn-sm" onclick="cpWA()">Copy Message</button><button class="btn btn-outline btn-sm" onclick="genWA()">↺ Regenerate</button></div>`;
-  }catch(e){document.getElementById('wa-out').innerHTML=`<div class="notice notice-red">Error: ${e.message}</div>`;}
-}
-function cpWA(){const t=document.querySelector('.wa-bubble');if(t)navigator.clipboard.writeText(t.innerText).then(()=>{const b=document.querySelector('#wa-out .btn-outline');if(b)b.textContent='Copied ✓';});}
-
-const toolCfg={
-  jd:{t:'JD Decoder',h:`<div class="fg"><label>Paste Job Description</label><textarea id="t-jd" style="min-height:120px" placeholder="Paste the full JD here..."></textarea></div><div class="fg"><label>Select Resume</label><select id="t-jr"><option value="r1">Resume 1 — Digital Marketing</option><option value="r2">Resume 2 — Strategic Communicator</option><option value="r3">Resume 3 — Brand Strategist</option><option value="r4">Resume 4 — Consulting & Strategy</option></select></div><button class="btn btn-gold" onclick="runTool('jd')">Decode JD</button>`},
-  subject:{t:'Subject Line Generator',h:`<div class="fg"><label>Company Name</label><input id="t-sc" placeholder="e.g. Chaayos"></div><div class="fg"><label>Role</label><input id="t-sr" placeholder="e.g. Brand Manager"></div><button class="btn btn-gold" onclick="runTool('subject')">Generate 5 Subject Lines</button>`},
-  followup:{t:'Follow-Up Drafter',h:`<div class="fg"><label>HR Name <span class="optional">(optional)</span></label><input id="t-fn" placeholder="e.g. Tanishka"></div><div class="fg"><label>Company</label><input id="t-fc" placeholder="e.g. Chaayos"></div><div class="fg"><label>Days since outreach</label><input id="t-fd" type="number" value="7"></div><button class="btn btn-gold" onclick="runTool('followup')">Draft Follow-Up</button>`},
-  interview:{t:'Interview Prep',h:`<div class="fg"><label>Paste Job Description</label><textarea id="t-ij" style="min-height:100px" placeholder="Paste JD..."></textarea></div><div class="fg"><label>Company Name</label><input id="t-ic" placeholder="e.g. Chaayos"></div><button class="btn btn-gold" onclick="runTool('interview')">Generate Q&A</button>`},
-  company:{t:'Company Research Brief',h:`<div class="fg"><label>Company Name</label><input id="t-cc" placeholder="e.g. Chaayos"></div><div class="fg"><label>Industry <span class="optional">(optional)</span></label><input id="t-ci" placeholder="e.g. F&B, Fintech, FMCG"></div><button class="btn btn-gold" onclick="runTool('company')">Generate Brief</button>`},
-  fit:{t:'Role Fit Score',h:`<div class="fg"><label>Paste Job Description</label><textarea id="t-fj" style="min-height:100px" placeholder="Paste JD..."></textarea></div><div class="fg"><label>Select Resume</label><select id="t-fr"><option value="r1">Resume 1</option><option value="r2">Resume 2</option><option value="r3">Resume 3</option><option value="r4">Resume 4</option></select></div><button class="btn btn-gold" onclick="runTool('fit')">Score My Fit</button>`}
+const SKILL_MAP={
+  'crm':['crm','salesforce','zoho','hubspot','funnel','customer relationship'],
+  'analytics':['analytics','data','dashboard','power bi','google analytics','reporting','insights','metrics'],
+  'performance marketing':['performance','paid ads','campaign','roi','roas','conversion','funnel'],
+  'brand strategy':['brand','positioning','storytelling','narrative','identity','campaign architecture'],
+  'growth':['growth','retention','engagement','acquisition','activation','lifecycle'],
+  'content strategy':['content','copy','editorial','social media','tofu','mofu','bofu'],
+  'consulting':['consulting','strategy','problem solving','stakeholder','pestle','swot','market intelligence','mece'],
+  'communication':['communication','presentation','stakeholder','corporate','cross-functional'],
+  'research':['research','market research','consumer','survey','analysis','insight'],
+  'product':['product','ux','customer experience','journey','drop-off','onboarding']
 };
-
-function openTool(id){const c=toolCfg[id];document.getElementById('tool-panel').style.display='block';document.getElementById('tp-title').textContent=c.t;document.getElementById('tp-content').innerHTML=c.h+'<div id="t-res" style="margin-top:16px"></div>';document.getElementById('tool-panel').scrollIntoView({behavior:'smooth'});}
-
-async function runTool(type){
-  const r=document.getElementById('t-res');
-  r.innerHTML=`<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
-  let prompt='';
-  if(type==='jd'){const jd=document.getElementById('t-jd').value,rd=P.resumes[document.getElementById('t-jr').value];prompt=`Career consultant analysing JD for Priyal Verma.\nProfile (${rd.l}): ${rd.s}\nJD: ${jd}\nProvide concisely: 1) Top 3 things to highlight from her resume for this JD 2) How to frame her journalism experience for this role 3) Any genuine gaps 4) Key keywords to include in her email/cover letter.`;}
-  else if(type==='subject'){const co=document.getElementById('t-sc').value,ro=document.getElementById('t-sr').value;prompt=`Generate exactly 5 compelling, distinct professional email subject lines for Priyal Verma applying to a ${ro||'marketing'} role at ${co}. She has MBA from SP Jain, CNN-News18 (25M+ viewers), WION (8M+ daily impressions). Each line must have a different angle. Numbered list only, no explanations.`;}
-  else if(type==='followup'){const n=document.getElementById('t-fn').value,co=document.getElementById('t-fc').value,d=document.getElementById('t-fd').value;prompt=`Write a polite professional follow-up email from Priyal Verma to ${n||'the HR'} at ${co}. It has been ${d} days since initial outreach. Formal, non-desperate, confident, adds value. 3-4 sentences max. Sign off as Priyal Verma, ${P.email}. Output only the email body.`;}
-  else if(type==='interview'){const jd=document.getElementById('t-ij').value,co=document.getElementById('t-ic').value;prompt=`Based on this JD for ${co} and Priyal's profile: ${P.resumes.r3.s}\nJD: ${jd}\n\nGenerate:\n1) Top 5 likely interview questions for this role\n2) For each question, a concise STAR-format answer using only Priyal's real experience and achievements. Be specific and factual.`;}
-  else if(type==='company'){const co=document.getElementById('t-cc').value,ind=document.getElementById('t-ci').value;prompt=`Give Priyal Verma a 5-point research brief on ${co}${ind?' ('+ind+')':''}:\n1) What they do and their market position\n2) Their marketing approach / brand positioning\n3) Company culture signals\n4) What they typically value in marketing hires\n5) One smart, specific talking point she can use in her outreach to stand out. Be factual and concise.`;}
-  else if(type==='fit'){const jd=document.getElementById('t-fj').value,rk=document.getElementById('t-fr').value,rd=P.resumes[rk];prompt=`Honestly score how well Priyal Verma's profile matches this JD.\nProfile (${rd.l}): ${rd.s}\nJD: ${jd}\n\nProvide:\n1) Fit score out of 100 with a clear rationale\n2) Top 3 strongest matching points\n3) Gaps or weaker areas (if any, be honest)\n4) Clear recommendation: Prioritise this / Apply normally / Skip\nBe direct and honest.`;}
-  try{const t=await callClaude(prompt,700);r.innerHTML=`<hr class="div"><div class="output-box">${t}</div>`;}
-  catch(e){r.innerHTML=`<div class="notice notice-red">Error: ${e.message}</div>`;}
+function tokens(text){return (text||'').toLowerCase()}
+function jdKeywords(jd){
+  const t=tokens(jd);const found=[];
+  Object.entries(SKILL_MAP).forEach(([k,words])=>{if(words.some(w=>t.includes(w)))found.push(k)});
+  const extras=(jd.toLowerCase().match(/\b[a-z][a-z+.-]{3,}\b/g)||[])
+    .filter(w=>!['with','this','that','from','will','role','work','team','skills','experience','candidate','responsibilities','requirements'].includes(w))
+    .slice(0,40);
+  return [...new Set([...found,...extras.slice(0,10)])];
 }
-
-function refreshTrk(f='all'){
-  const b=document.getElementById('trk-body');
-  const d=f==='all'?contacts:contacts.filter(c=>c.status===f);
-  if(!d.length){b.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-icon">◎</div><div>No contacts yet.</div></div></td></tr>`;return;}
-  b.innerHTML=d.map(c=>`<tr><td class="w5">${c.name}</td><td>${c.company}</td><td class="muted">${c.role}</td><td><span style="font-size:11px;background:var(--cream);padding:2px 7px;border-radius:4px">${c.resume.split('—')[0].trim()}</span></td><td class="muted">${c.date}</td><td><span class="pill ${sc(c.status)}">${c.status}</span></td><td><button class="btn btn-outline btn-sm" onclick="cycle(${c.id})">↑ Next</button></td></tr>`).join('');
-}
-function filterTrk(v){refreshTrk(v);}
-function sc(s){if(s==='Draft Created')return's-draft';if(s==='Replied')return's-replied';if(s==='Interview')return's-interview';if(s==='Offer')return's-sent';return's-draft';}
-function cycle(id){const c=contacts.find(x=>x.id===id);if(!c)return;const st=['Draft Created','Replied','Interview','Offer'];c.status=st[(st.indexOf(c.status)+1)%st.length];save();refresh();}
-
-function refreshPipe(){
-  const map={a:'Draft Created',r:'Replied',i:'Interview',o:'Offer'};
-  Object.entries(map).forEach(([k,s])=>{
-    const items=contacts.filter(c=>c.status===s);
-    document.getElementById('p-'+k).textContent=items.length;
-    const col=document.getElementById('pc-'+k);
-    col.innerHTML=items.length?items.slice(0,4).map(c=>`<div class="pc"><div class="pc-co">${c.company}</div><div class="pc-ro">${c.role}</div></div>`).join(''):`<div class="tx muted" style="padding:8px;text-align:center">—</div>`;
+function scoreResume(resume,jd){
+  const kws=jdKeywords(jd);const rt=tokens(resume.text+' '+resume.tags);let hits=[],missing=[];
+  kws.forEach(k=>{
+    const words=SKILL_MAP[k]||[k];
+    if(words.some(w=>rt.includes(w))||rt.includes(k))hits.push(k);else missing.push(k);
   });
-  const sel=document.getElementById('pipeContact');
-  sel.innerHTML='<option value="">Choose...</option>'+contacts.map(c=>`<option value="${c.id}">${c.name!=='—'?c.name:c.company} — ${c.company}</option>`).join('');
+  const score=kws.length?Math.round((hits.length/kws.length)*100):50;
+  return {score,hits,missing,kws};
 }
-function updatePipe(){const id=parseInt(document.getElementById('pipeContact').value);const s=document.getElementById('pipeSt').value;const c=contacts.find(x=>x.id===id);if(!c)return;c.status=s;save();refresh();}
+function evidenceLines(resume,jd){
+  const s=(resume.text||'').split(/(?<=[.!?])\s+|[\n•]+/).map(x=>x.trim()).filter(x=>x.length>20);
+  const kws=jdKeywords(jd).join(' ');
+  const ranked=s.map(line=>{
+    let pts=0;Object.entries(SKILL_MAP).forEach(([k,words])=>{if(kws.includes(k)&&words.some(w=>tokens(line).includes(w)))pts+=3});
+    const nums=(line.match(/\d+[%$MKm+.]*/g)||[]).length;pts+=nums;
+    return {line,pts};
+  }).sort((a,b)=>b.pts-a.pts);
+  return ranked.filter(x=>x.pts>0).slice(0,6).map(x=>x.line).concat(ranked.slice(0,3).map(x=>x.line)).filter((v,i,a)=>a.indexOf(v)===i).slice(0,6);
+}
+function recommendResume(){
+  const jd=getVal('apJD');if(!jd){alert('Paste the JD first.');return}
+  const ranked=data.resumes.map(r=>({r,...scoreResume(r,jd)})).sort((a,b)=>b.score-a.score);
+  if(ranked[0]){setVal('apResume',ranked[0].r.id);renderMatchPanel(ranked[0].r,jd)}
+}
+function renderMatchPanel(resume,jd){
+  const m=scoreResume(resume,jd);
+  document.getElementById('matchPanel').innerHTML=`<div class="notice blue"><b>Profile-to-JD Fit Score:</b> ${escapeHTML(resume.name)} · ${m.score}/100<div class="score" style="margin-top:8px"><span style="width:${m.score}%"></span></div><div style="margin-top:8px"><b>Matched:</b> ${m.hits.map(x=>`<span class="keyword">${escapeHTML(x)}</span>`).join('')||'Limited direct matches'}<br><b>Missing / weak:</b> ${m.missing.slice(0,8).map(x=>`<span class="keyword">${escapeHTML(x)}</span>`).join('')||'No major missing keywords detected'}</div></div>`;
+}
+function getApplyData(){
+  const resume=data.resumes.find(r=>r.id===getVal('apResume'))||data.resumes[0];
+  return {
+    company:getVal('apCompany'),role:getVal('apRole')||'the relevant role',location:getVal('apLocation'),link:getVal('apLink'),jd:getVal('apJD'),
+    priority:getVal('apPriority')||'Medium',hrName:getVal('apHRName'),hrEmail:getVal('apHREmail'),phone:getVal('apPhone'),source:getVal('apSource')||'LinkedIn',resume
+  };
+}
+function generateApplicationPack(){
+  const x=getApplyData();
+  if(!x.company){alert('Add company name.');return}
+  if(!x.jd){alert('Paste the JD so HuntHQ can align honestly.');return}
+  renderMatchPanel(x.resume,x.jd);
 
-function refreshStats(){
-  document.getElementById('st-total').textContent=contacts.length;
-  document.getElementById('st-draft').textContent=contacts.filter(c=>c.status==='Draft Created').length;
-  document.getElementById('st-replied').textContent=contacts.filter(c=>c.status==='Replied').length;
-  document.getElementById('st-int').textContent=contacts.filter(c=>c.status==='Interview').length;
-  const rl=document.getElementById('recent-list');
-  if(!contacts.length){rl.innerHTML=`<div class="empty"><div class="empty-icon">✦</div><div>No outreach yet.</div></div>`;return;}
-  rl.innerHTML=contacts.slice(0,5).map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)"><div><div class="w5 ts">${c.name!=='—'?c.name:c.company}</div><div class="tx muted">${c.company} · ${c.date}</div></div><span class="pill ${sc(c.status)}" style="font-size:10px">${c.status}</span></div>`).join('');
+  const ev=evidenceLines(x.resume,x.jd);
+  const m=scoreResume(x.resume,x.jd);
+  const sal=x.hrName?`Dear ${x.hrName},`:'Dear Hiring Manager,';
+  const role=x.role||'the relevant role';
+  const company=x.company;
+  const subject=`Application for ${role} — Priyal Verma | SP Jain MBA`;
+
+  const top = ev.length ? ev : [
+    'MBA candidate in Global Marketing at SP Jain School of Global Management',
+    'experience across CNN-News18 and WION with measurable audience engagement outcomes',
+    'projects involving CRM analytics, customer experience, market research, and structured business analysis'
+  ];
+
+  const angle = choosePositioningAngle(m.hits, role, x.jd);
+  const proofBullets = top.slice(0,4).map(e=>`• ${polishEvidence(e,m.hits)}`).join('\n');
+
+  const email=`Subject: ${subject}
+
+${sal}
+
+I hope you are doing well. I am reaching out to express my interest in the ${role} opportunity at ${company}. My profile brings together Global Marketing training at SP Jain with hands-on experience in ${angle}, supported by measurable work across CNN-News18, WION, and MBA business projects.
+
+A few relevant highlights from my background are:
+${proofBullets}
+
+I would be grateful if you could consider my profile for this opportunity. I have included my portfolio and LinkedIn below for your reference.
+
+Portfolio: ${data.settings.portfolio}
+LinkedIn: ${data.settings.linkedin}
+
+Regards,
+${data.settings.name}
+${data.settings.email}`;
+
+  const cover=`${sal}
+
+I am writing to express my interest in the ${role} opportunity at ${company}. As an MBA candidate in Global Marketing at SP Jain School of Global Management, I bring a combination of brand thinking, structured communication, audience insight, and analytical problem-solving. What makes this role especially relevant to my profile is its alignment with ${m.hits.slice(0,4).join(', ')||'marketing strategy, communication, and business analysis'}.
+
+My professional foundation has been shaped by high-pressure media and marketing-facing environments where clarity, speed, and measurable impact mattered. ${paragraphFromEvidence(top[0],m.hits)} ${paragraphFromEvidence(top[1]||top[0],m.hits)} Beyond media, my MBA projects have strengthened my ability to work with customer insights, CRM data, market research, and business frameworks to convert information into actionable recommendations.
+
+I am particularly drawn to ${company} because this opportunity would allow me to apply my strengths in ${angle} in a business context. I have kept my application strictly grounded in work I have actually done; the alignment is in how I am framing my experience against the role requirements, not by adding unsupported claims. I would welcome the opportunity to discuss how my background can contribute to your team.
+
+Portfolio: ${data.settings.portfolio}
+LinkedIn: ${data.settings.linkedin}
+
+Sincerely,
+${data.settings.name}`;
+
+  const wa=`Hello ${x.hrName||'Sir/Ma’am'}, I am ${data.settings.name}, an MBA Global Marketing student at SP Jain. I came across the ${role} opportunity at ${company} and felt my background in ${angle} could be relevant. My experience includes ${shorten(polishEvidence(top[0],m.hits),155)}. I would be grateful if you could guide me on the application process or consider my profile. Portfolio: ${data.settings.portfolio}`;
+
+  const lin=`Hello ${x.hrName||''}, I am ${data.settings.name}, an MBA Global Marketing student at SP Jain. I came across the ${role} opportunity at ${company}. My background combines ${angle}, with verified experience across CNN-News18, WION, and MBA projects. I would be grateful to connect and share my profile for consideration.`;
+
+  const suggestions=resumeSuggestions(x.resume,x.jd,top,m);
+
+  setText('outEmail',email);
+  setText('outCover',cover);
+  setText('outWhatsapp',wa);
+  setText('outLinkedin',lin);
+  document.getElementById('outResume').innerHTML=suggestions;
+  currentPack={...x,subject,email,cover,wa,lin,suggestions,score:m.score,hits:m.hits,missing:m.missing,createdAt:todayISO()};
+  setOutTab('email');
 }
+
+function choosePositioningAngle(hits, role, jd){
+  const text=(role+' '+jd).toLowerCase();
+  if(hits.includes('consulting')||text.includes('consult')) return 'structured problem-solving, market intelligence, stakeholder-ready communication, and business analysis';
+  if(hits.includes('brand strategy')||text.includes('brand')) return 'brand positioning, narrative-led growth, audience understanding, and campaign thinking';
+  if(hits.includes('analytics')||hits.includes('crm')||text.includes('analytics')||text.includes('crm')) return 'CRM analytics, performance insights, funnel thinking, and data-backed decision-making';
+  if(hits.includes('growth')||text.includes('growth')) return 'growth marketing, engagement improvement, audience retention, and customer insight';
+  if(hits.includes('communication')) return 'strategic communication, content judgement, stakeholder communication, and message clarity';
+  return 'marketing strategy, communication, customer insight, and analytical execution';
+}
+
+function polishEvidence(line,hits){
+  if(!line)return '';
+  let l=line.trim().replace(/\s+/g,' ');
+  const lower=l.toLowerCase();
+  let prefix='';
+
+  if(lower.includes('cnn')||lower.includes('wion')||lower.includes('viewers')||lower.includes('impressions')){
+    prefix='Built measurable communication and audience-engagement experience by ';
+  } else if(lower.includes('salesforce')||lower.includes('zoho')||lower.includes('crm')||lower.includes('dashboard')){
+    prefix='Applied CRM and analytics thinking through ';
+  } else if(lower.includes('amazon')||lower.includes('fluence')||lower.includes('pestle')||lower.includes('swot')){
+    prefix='Strengthened business problem-solving through ';
+  } else if(lower.includes('blue ocean')||lower.includes('pitch')){
+    prefix='Demonstrated strategic presentation and competitive thinking through ';
+  } else {
+    prefix='Relevant verified experience includes ';
+  }
+
+  l=l.charAt(0).toLowerCase()+l.slice(1);
+  return prefix + l.replace(/\.$/,'') + '.';
+}
+
+function paragraphFromEvidence(line,hits){
+  const p=polishEvidence(line,hits);
+  return p ? p : '';
+}
+
+function sentenceCase(s){return s?s.charAt(0).toUpperCase()+s.slice(1):''}
+function shorten(s,n){return s.length>n?s.slice(0,n-1)+'…':s}
+function resumeSuggestions(resume,jd,ev,m){
+  const rebuilt = buildResumeRewrite(resume,jd,ev,m);
+  const lines=[
+    `IMPORTANT: This is not a real ATS score. It is HuntHQ's Profile-to-JD Fit Score based on keyword overlap, role relevance, and verified evidence in your saved resume text.`,
+    ``,
+    `PROFILE-TO-JD FIT SCORE: ${m.score}/100`,
+    `BEST RESUME TO USE: ${resume.name}`,
+    ``,
+    `MATCHED ROLE SIGNALS: ${m.hits.join(', ')||'Limited explicit keyword match found.'}`,
+    `MISSING / WEAK ROLE SIGNALS: ${m.missing.slice(0,12).join(', ')||'No major missing keywords detected.'}`,
+    ``,
+    `RESUME REBUILDER — HONEST, ATS-STYLE VERSION`,
+    `Use this as a stronger version of your resume summary and bullets. It does not add new achievements; it only reframes verified evidence.`,
+    ``,
+    rebuilt,
+    ``,
+    `WHAT TO CHANGE IN YOUR RESUME`,
+    ...ev.slice(0,6).map((e,i)=>`${i+1}. Original evidence: ${e}\n   Stronger framing: ${rewriteLine(e,m.hits)}`),
+    ``,
+    `HONESTY GUARDRAIL`,
+    `Do not add a tool, company, campaign, client, leadership claim, certification, or metric unless it already exists in your verified resume/resume evidence. If a JD asks for something not present, mark it as a gap instead of inventing it.`
+  ];
+  return escapeHTML(lines.join('\n'));
+}
+
+function buildResumeRewrite(resume,jd,ev,m){
+  const roleSignals=m.hits.slice(0,5);
+  const angle=choosePositioningAngle(m.hits,'',jd);
+  const evidence=ev.slice(0,6);
+  const summary=`PROFESSIONAL SUMMARY\nMBA Global Marketing candidate at SP Jain with experience in ${angle}. Background spans measurable audience engagement, structured communication, CRM/customer insight projects, and business analysis. Strong ability to translate complex information into clear, stakeholder-ready narratives and practical marketing recommendations.`;
+
+  const skills=`\n\nCORE SKILLS ALIGNED TO THIS JD\n${roleSignals.length?roleSignals.map(x=>'• '+titleCase(x)).join('\n'):'• Marketing Strategy\n• Communication\n• Customer Insight\n• Business Analysis'}\n• Resume evidence-based storytelling\n• Stakeholder-ready written communication`;
+
+  const bullets=`\n\nSELECTED EXPERIENCE BULLETS TO PRIORITISE\n${evidence.length?evidence.map(e=>'• '+rewriteLine(e,m.hits)).join('\n'):'• Add verified bullets from your resume evidence here.'}`;
+
+  const gaps=`\n\nGAPS TO HANDLE HONESTLY\n${m.missing.length?m.missing.slice(0,6).map(x=>'• JD mentions '+x+'; include only if you have real evidence, otherwise do not force it.').join('\n'):'• No major keyword gap detected from the pasted JD.'}`;
+
+  return summary+skills+bullets+gaps;
+}
+
+function titleCase(s){return s.replace(/\w\S*/g,t=>t.charAt(0).toUpperCase()+t.slice(1).toLowerCase())}
+
+function rewriteLine(line,hits){
+  const focus=hits.slice(0,3).join(', ')||'the role requirements';
+  const clean=(line||'').trim().replace(/\s+/g,' ').replace(/\.$/,'');
+  if(!clean)return '';
+  return `Reframe as ${focus} evidence: ${clean}.`;
+}
+function setOutTab(tab){
+  activeOutput=tab;
+  document.querySelectorAll('[data-outtab]').forEach(b=>b.classList.toggle('active',b.dataset.outtab===tab));
+  ['email','cover','whatsapp','linkedin','resume'].forEach(t=>document.getElementById('out'+cap(t)).classList.toggle('hide',t!==tab));
+}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+function copyActiveOutput(){
+  const id='out'+cap(activeOutput);
+  const text=document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(()=>alert('Copied.'));
+}
+function openGmailCompose(){
+  const email=document.getElementById('outEmail').innerText;
+  const x=getApplyData();
+  const body=email.replace(/^Subject:.*\n\n?/,'');
+  const subject=(email.match(/^Subject:\s*(.*)$/m)||[])[1]||`Application — ${data.settings.name}`;
+  const to=x.hrEmail||'';
+  window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,'_blank');
+}
+function downloadCoverLetter(){download('cover-letter-priyal-verma.txt',document.getElementById('outCover').innerText)}
+
+function saveApplicationPack(){
+  if(!currentPack){alert('Generate an application pack first.');return}
+  const x=currentPack;
+  const contact=upsertContact({name:x.hrName,email:x.hrEmail,company:x.company,role:x.role,phone:x.phone,source:x.source,notes:''},false);
+  const opp=upsertOpportunity({company:x.company,role:x.role,location:x.location,link:x.link,jd:x.jd,priority:x.priority},false);
+  const app={id:id(),company:x.company,role:x.role,hrName:x.hrName,hrEmail:x.hrEmail,phone:x.phone,source:x.source,resumeId:x.resume.id,resumeName:x.resume.name,score:x.score,status:'Drafted',createdAt:todayISO(),nextFollowup:addDays(data.settings.followupDays||5),subject:x.subject,email:document.getElementById('outEmail').innerText,cover:document.getElementById('outCover').innerText,whatsapp:document.getElementById('outWhatsapp').innerText,linkedin:document.getElementById('outLinkedin').innerText,notes:'',contactId:contact?.id,opportunityId:opp?.id};
+  data.applications.unshift(app);saveData();alert('Saved to tracker and follow-ups.');
+}
+
+function saveOpportunityFromApply(){const x=getApplyData();upsertOpportunity({company:x.company,role:x.role,location:x.location,link:x.link,jd:x.jd,priority:x.priority},true)}
+function upsertOpportunity(o,notify=true){
+  if(!o.company){if(notify)alert('Company required.');return null}
+  let found=data.opportunities.find(x=>tokens(x.company)===tokens(o.company)&&tokens(x.role)===tokens(o.role));
+  if(found){Object.assign(found,o);if(notify)alert('Opportunity updated.');saveData();return found}
+  const n={id:id(),company:o.company,role:o.role||'',location:o.location||'',link:o.link||'',jd:o.jd||'',priority:o.priority||'Medium',deadline:o.deadline||'',createdAt:todayISO()};
+  data.opportunities.unshift(n);if(notify)alert('Opportunity saved.');saveData();return n;
+}
+function saveOpportunity(){upsertOpportunity({company:getVal('oCompany'),role:getVal('oRole'),location:getVal('oLocation'),priority:getVal('oPriority'),deadline:getVal('oDeadline'),link:getVal('oLink'),jd:getVal('oJD')},true);showOppForm(false);['oCompany','oRole','oLocation','oLink','oJD','oDeadline'].forEach(x=>setVal(x,''))}
+function showOppForm(force){document.getElementById('oppForm').classList.toggle('hide',force===false?true:false)}
+function renderOpps(){
+  const q=tokens(getVal('oppSearch'));let arr=data.opportunities.filter(o=>!q||tokens(o.company+' '+o.role+' '+o.location).includes(q));
+  document.getElementById('oppList').innerHTML=arr.length?arr.map(o=>`<div class="item between"><div><b>${escapeHTML(o.company)}</b> — ${escapeHTML(o.role||'Role not added')} ${priorityPill(o.priority)}<div class="meta">${escapeHTML(o.location||'')} ${o.deadline?'· Deadline '+o.deadline:''}</div></div><div class="row"><button class="btn out sm" onclick="useOpportunity('${o.id}')">Use</button><button class="btn red sm" onclick="deleteOpp('${o.id}')">Delete</button></div></div>`).join(''):'<div class="empty">No opportunities saved.</div>';
+}
+function useOpportunity(idv){go('apply');setVal('apOpp',idv);document.getElementById('apOpp').dispatchEvent(new Event('change'))}
+function deleteOpp(idv){if(confirm('Delete opportunity?')){data.opportunities=data.opportunities.filter(o=>o.id!==idv);saveData()}}
+
+function saveContact(){upsertContact({name:getVal('cName'),email:getVal('cEmail'),company:getVal('cCompany'),role:getVal('cRole'),phone:getVal('cPhone'),source:getVal('cSource'),notes:getVal('cNotes')},true);['cName','cEmail','cCompany','cRole','cPhone','cNotes'].forEach(x=>setVal(x,''))}
+function upsertContact(c,notify=true){
+  if(!c.name && !c.email){if(notify)alert('Add at least name or email.');return null}
+  let found=c.email?data.contacts.find(x=>tokens(x.email)===tokens(c.email)):null;
+  if(found){Object.assign(found,{...found,...c});if(notify)alert('Contact updated.');saveData();return found}
+  const n={id:id(),name:c.name||'',email:c.email||'',company:c.company||'',role:c.role||'',phone:c.phone||'',source:c.source||'',notes:c.notes||'',createdAt:todayISO()};
+  data.contacts.unshift(n);if(notify)alert('Contact saved.');saveData();return n;
+}
+function renderContacts(){
+  const q=tokens(getVal('contactSearch'));const arr=data.contacts.filter(c=>!q||tokens(c.name+' '+c.email+' '+c.company+' '+c.role).includes(q));
+  document.getElementById('contactList').innerHTML=arr.length?table(['Name','Email','Company','Role','Source','Action'],arr.map(c=>[c.name||'—',c.email||'—',c.company||'—',c.role||'—',c.source||'—',`<button class="btn out sm" onclick="useContact('${c.id}')">Use</button> <button class="btn red sm" onclick="deleteContact('${c.id}')">Delete</button>`])):'<div class="empty">No contacts yet.</div>';
+}
+function useContact(idv){go('apply');setVal('apContact',idv);document.getElementById('apContact').dispatchEvent(new Event('change'))}
+function deleteContact(idv){if(confirm('Delete contact?')){data.contacts=data.contacts.filter(c=>c.id!==idv);saveData()}}
+function parseCSV(text){
+  const lines=text.split(/\r?\n/).filter(x=>x.trim());if(!lines.length)return [];
+  const rows=lines.map(line=>line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g)?.map(v=>v.replace(/^"|"$/g,'').trim())||[]);
+  const header=rows[0].map(x=>tokens(x));const hasHeader=header.some(h=>['name','email','company'].includes(h));
+  const body=hasHeader?rows.slice(1):rows;
+  return body.map(r=>({name:r[0]||'',email:r[1]||'',company:r[2]||'',role:r[3]||'',phone:r[4]||'',source:r[5]||'',notes:r[6]||''}));
+}
+function importContactsPaste(){const rows=parseCSV(getVal('csvPaste'));rows.forEach(c=>upsertContact(c,false));saveData();alert(`Imported/merged ${rows.length} contacts.`)}
+function importContactsFile(e){const f=e.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=()=>{const rows=parseCSV(reader.result);rows.forEach(c=>upsertContact(c,false));saveData();alert(`Imported/merged ${rows.length} contacts.`)};reader.readAsText(f)}
+
+function renderResumes(){
+  document.getElementById('resumeList').innerHTML=data.resumes.map(r=>`<div class="item"><div class="between"><div><b>${escapeHTML(r.name)}</b> ${r.isDefault?'<span class="pill gold">Default</span>':''}<div class="meta">${escapeHTML(r.tags||'No tags')} · ${r.text.length} characters evidence</div></div><div class="row"><button class="btn out sm" onclick="editResume('${r.id}')">Edit</button><button class="btn out sm" onclick="makeDefaultResume('${r.id}')">Default</button><button class="btn red sm" onclick="deleteResume('${r.id}')">Delete</button></div></div></div>`).join('');
+}
+function saveResume(){
+  const edit=getVal('rEditId');const obj={name:getVal('rName'),tags:getVal('rTags'),text:getVal('rText')};
+  if(!obj.name||!obj.text){alert('Resume name and evidence text are required.');return}
+  if(edit){const r=data.resumes.find(x=>x.id===edit);Object.assign(r,obj)}
+  else data.resumes.unshift({id:id(),...obj,isDefault:data.resumes.length===0});
+  clearResumeForm();saveData();alert('Resume saved.');
+}
+function editResume(idv){const r=data.resumes.find(x=>x.id===idv);if(!r)return;setVal('rEditId',r.id);setVal('rName',r.name);setVal('rTags',r.tags);setVal('rText',r.text)}
+function clearResumeForm(){['rEditId','rName','rTags','rText'].forEach(x=>setVal(x,''));document.getElementById('rFile').value=''}
+function makeDefaultResume(idv){data.resumes.forEach(r=>r.isDefault=r.id===idv);saveData()}
+function deleteResume(idv){if(data.resumes.length<=1){alert('Keep at least one resume.');return}if(confirm('Delete resume?')){data.resumes=data.resumes.filter(r=>r.id!==idv);if(!data.resumes.some(r=>r.isDefault))data.resumes[0].isDefault=true;saveData()}}
+function loadResumeFile(e){const f=e.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=()=>{setVal('rText',reader.result);if(!getVal('rName'))setVal('rName',f.name.replace(/\.[^.]+$/,''))};reader.readAsText(f)}
+
+function renderTracker(){
+  const q=tokens(getVal('trackerSearch'));const arr=data.applications.filter(a=>!q||tokens(a.company+' '+a.role+' '+a.hrName+' '+a.hrEmail+' '+a.status).includes(q));
+  document.getElementById('trackerTable').innerHTML=arr.length?table(['Company','Role','HR','Resume','Score','Status','Follow-up','Action'],arr.map(a=>[a.company,a.role,a.hrName||'—',a.resumeName||'—',a.score+'/100',statusPill(a.status),a.nextFollowup||'—',`<button class="btn out sm" onclick="cycleStatus('${a.id}')">Next</button> <button class="btn out sm" onclick="loadAppToApply('${a.id}')">Open</button> <button class="btn red sm" onclick="deleteApp('${a.id}')">Delete</button>`])):'<div class="empty">No applications saved.</div>';
+}
+function cycleStatus(idv){const st=['Drafted','Sent','Follow-up 1','Follow-up 2','Replied','Interview','Assignment','Final Round','Offer','Rejected','Closed'];const a=data.applications.find(x=>x.id===idv);if(!a)return;a.status=st[(st.indexOf(a.status)+1)%st.length]||'Drafted';if(['Replied','Interview','Offer','Rejected','Closed'].includes(a.status))a.nextFollowup='';else a.nextFollowup=addDays(data.settings.followupDays||5);saveData()}
+function deleteApp(idv){if(confirm('Delete application?')){data.applications=data.applications.filter(a=>a.id!==idv);saveData()}}
+function loadAppToApply(idv){const a=data.applications.find(x=>x.id===idv);if(!a)return;go('apply');setVal('apCompany',a.company);setVal('apRole',a.role);setVal('apHRName',a.hrName);setVal('apHREmail',a.hrEmail);setVal('apPhone',a.phone);setVal('apSource',a.source);setVal('apResume',a.resumeId);setText('outEmail',a.email);setText('outCover',a.cover);setText('outWhatsapp',a.whatsapp);setText('outLinkedin',a.linkedin);currentPack=null}
+
+function renderPipeline(){
+  const stages=['Drafted','Sent','Follow-up 1','Replied','Interview','Offer'];
+  document.getElementById('kanban').innerHTML=stages.map(s=>{
+    const arr=data.applications.filter(a=>a.status===s);
+    return `<div class="col"><h4><span>${s}</span><span>${arr.length}</span></h4><div class="cards">${arr.map(a=>`<div class="kcard"><b>${escapeHTML(a.company)}</b><div>${escapeHTML(a.role)}</div><div class="meta">${escapeHTML(a.hrName||'No HR')} · ${a.nextFollowup||'No follow-up'}</div><button class="btn out sm" onclick="cycleStatus('${a.id}')">Move</button></div>`).join('')||'<div class="empty">—</div>'}</div></div>`;
+  }).join('');
+}
+function renderFollowups(){
+  const arr=[...data.applications].filter(a=>a.nextFollowup && !['Offer','Rejected','Closed'].includes(a.status)).sort((a,b)=>a.nextFollowup.localeCompare(b.nextFollowup));
+  document.getElementById('followupList').innerHTML=arr.length?arr.map(a=>`<div class="item between"><div><b>${escapeHTML(a.company)}</b> — ${escapeHTML(a.role)} ${a.nextFollowup<=todayISO()?'<span class="pill red">Due</span>':'<span class="pill blue">Upcoming</span>'}<div class="meta">HR: ${escapeHTML(a.hrName||a.hrEmail||'—')} · Due: ${a.nextFollowup} · Status: ${a.status}</div></div><div class="row"><button class="btn out sm" onclick="createFollowup('${a.id}')">Generate follow-up</button><button class="btn green sm" onclick="markFollowed('${a.id}')">Mark done</button></div></div>`).join(''):'<div class="empty">No follow-ups pending.</div>';
+}
+function createFollowup(idv){
+  const a=data.applications.find(x=>x.id===idv);if(!a)return;
+  const text=`Subject: Follow-up regarding ${a.role} — ${data.settings.name}
+
+Dear ${a.hrName||'Hiring Manager'},
+
+I hope you are doing well. I wanted to politely follow up on my earlier application for ${a.role} at ${a.company}. I remain very interested in the opportunity and would be grateful for any update regarding the next steps.
+
+Regards,
+${data.settings.name}
+${data.settings.email}`;
+  navigator.clipboard.writeText(text).then(()=>alert('Follow-up copied.'));
+}
+function markFollowed(idv){const a=data.applications.find(x=>x.id===idv);if(!a)return;a.status=a.status==='Follow-up 1'?'Follow-up 2':'Follow-up 1';a.nextFollowup=addDays(data.settings.followupDays||5);saveData()}
+
+function renderToolsSelects(){const s=document.getElementById('toolResume');if(s)s.innerHTML=data.resumes.map(r=>`<option value="${r.id}">${escapeHTML(r.name)}</option>`).join('')}
+function runJDTool(){
+  const jd=getVal('toolJD');const r=data.resumes.find(x=>x.id===getVal('toolResume'));if(!jd||!r){alert('Add JD and resume.');return}
+  const m=scoreResume(r,jd);const ev=evidenceLines(r,jd);
+  document.getElementById('toolResult').textContent=[
+    `Profile-to-JD Fit Score: ${m.score}/100`,
+    ``,
+    `Matched keywords: ${m.hits.join(', ')||'Limited direct matches'}`,
+    `Missing / weak keywords: ${m.missing.slice(0,12).join(', ')||'No major weak keywords'}`,
+    ``,
+    `Evidence to highlight:`,
+    ...ev.map((x,i)=>`${i+1}. ${x}`),
+    ``,
+    `Resume Rebuilder suggestions:`,
+    ...ev.slice(0,4).map((x,i)=>`${i+1}. ${rewriteLine(x,m.hits)}`),
+    ``,
+    `Honesty check: this is not a real ATS score; it is a JD-fit score. Do not add anything not already present in the evidence above.`
+  ].join('\n');
+}
+
+function fillSettings(){
+  ['Name','Email','Phone','Linkedin','Portfolio','Tone'].forEach(k=>{const idv='set'+k;const key=k.toLowerCase();const el=document.getElementById(idv);if(el)el.value=data.settings[key]||''})
+}
+function saveSettings(){data.settings={...data.settings,name:getVal('setName'),email:getVal('setEmail'),phone:getVal('setPhone'),linkedin:getVal('setLinkedin'),portfolio:getVal('setPortfolio'),tone:getVal('setTone')};saveData();alert('Settings saved.')}
+function exportBackup(){download('hunthq-backup.json',JSON.stringify(data,null,2),'application/json')}
+function importBackup(e){const f=e.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=()=>{try{data=JSON.parse(reader.result);saveData();alert('Backup imported.')}catch(err){alert('Invalid backup file.')}};reader.readAsText(f)}
+function exportCSV(type){
+  const arr=data[type]||[];if(!arr.length){alert('Nothing to export.');return}
+  const keys=Object.keys(arr[0]);const csv=[keys.join(','),...arr.map(o=>keys.map(k=>`"${String(o[k]??'').replace(/"/g,'""')}"`).join(','))].join('\n');
+  download(type+'.csv',csv,'text/csv');
+}
+
+function table(headers,rows){
+  return `<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${escapeHTML(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${String(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function statusPill(s){const cls={Drafted:'gold',Sent:'blue','Follow-up 1':'purple','Follow-up 2':'purple',Replied:'green',Interview:'green',Assignment:'blue','Final Round':'blue',Offer:'green',Rejected:'red',Closed:'red'}[s]||'gold';return `<span class="pill ${cls}">${escapeHTML(s)}</span>`}
+function priorityPill(p){return `<span class="pill ${p==='High'?'red':p==='Low'?'blue':'gold'}">${escapeHTML(p||'Medium')}</span>`}
 </script>
 </body>
 </html>
